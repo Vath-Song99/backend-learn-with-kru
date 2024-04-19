@@ -1,0 +1,52 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "learnwithkru",
+		"version": "1.0.0",
+		"description": "Learnwithkru api project",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Smoeury Songvat"
+		}
+	},
+	"paths": {
+		"/v1/auth": {
+			"get": {
+				"operationId": "GetExamples",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
