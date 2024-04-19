@@ -3,8 +3,10 @@ import { PATH_OK } from "../path-defs";
 
 
 // Route
-const Route = Router()
+const Routehealths = Router()
 
-Route.get(PATH_OK,(req,res)=>{
+Routehealths.get(PATH_OK,(req,res)=>{
 res.send("hello world")
 })
+
+export default Routehealths
