@@ -1,5 +1,5 @@
 export interface AuthControllerType{
-    username: string;
+    firstname: string;
     email: string;
     password: string;
 }

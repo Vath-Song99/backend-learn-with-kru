@@ -1,6 +1,7 @@
 import { z } from 'zod'
 const userValidateSchema = z.object({
-    username: z.string().min(3).max(25),
+    firstname: z.string().min(3).max(25),
+    lastname: z.string().min(3).max(25),
     email: z.string().email(),
     password: z.string().min(3).max(35)
 });
