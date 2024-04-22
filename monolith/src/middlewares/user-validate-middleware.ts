@@ -6,9 +6,9 @@ import { Schema, ZodError } from "zod";
 export const userValidate = (schema: Schema) => {
   return async (req: Request, res: Response, _next: NextFunction) => {
     try {
-      const { username, email, password } = req.body;
+      const { firstname,lastname, email, password } = req.body;
 
-      schema.parse({ username, email, password });
+      schema.parse({ firstname,lastname, email, password });
 
       _next();
     } catch (error: unknown) {

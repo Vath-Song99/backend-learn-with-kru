@@ -2,6 +2,8 @@ import path from "path";
 import app from "./app";
 import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
+import EmailSender from "./utils/email-sender";
+import NodemailerEmailApi from "./utils/nodemailer-email-api";
 
 
 async function run() {
@@ -18,7 +20,10 @@ async function run() {
     );
     const config = createConfig(configPath);
     console.log("env", config);
-    // Activate Logger
+  // Activate Email Sender with EmailAPI [NodeMailer]
+  const emailSender = EmailSender.getInstance();
+  emailSender.activate();
+  emailSender.setEmailApi(new NodemailerEmailApi());
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();
@@ -34,7 +39,7 @@ async function run() {
           await mongodb.disconnect();
           console.log("mongodb disconnected!");
 
-          // Gracefully Terminate
+          // Gracefully Terminate 
           process.exit(1); // terminate the process due to error
         });
       } else {
