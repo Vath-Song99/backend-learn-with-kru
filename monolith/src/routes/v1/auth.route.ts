@@ -24,4 +24,5 @@ Route.post(PATH_SIGNUP, userValidate(userValidateSchema) , async (req: Request, 
     
 })
 
+
 export default Route
