@@ -11,7 +11,7 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "AuthControllerType": {
+    "User": {
         "dataType": "refObject",
         "properties": {
             "firstname": {"dataType":"string","required":true},
@@ -34,11 +34,11 @@ export function RegisterRoutes(app: Router) {
     // ###########################################################################################################
         app.post('/api/v1/auth/signup',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.createAuth)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.CreateAuth)),
 
-            function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {
+            function AuthController_CreateAuth(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AuthControllerType"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"User"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -50,7 +50,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new AuthController();
 
               templateService.apiHandler({
-                methodName: 'createAuth',
+                methodName: 'CreateAuth',
                 controller,
                 response,
                 next,
@@ -81,6 +81,35 @@ export function RegisterRoutes(app: Router) {
 
               templateService.apiHandler({
                 methodName: 'VerifyEmail',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/v1/auth/google',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.GoogleOAuth)),
+
+            function AuthController_GoogleOAuth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new AuthController();
+
+              templateService.apiHandler({
+                methodName: 'GoogleOAuth',
                 controller,
                 response,
                 next,
