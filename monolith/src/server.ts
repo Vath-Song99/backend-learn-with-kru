@@ -19,15 +19,11 @@ async function run() {
           : "../configs/.env.production"
     );
     const config = createConfig(configPath);
-<<<<<<< HEAD
-    // Activate Logger
-=======
-    console.log("env", config);
+
   // Activate Email Sender with EmailAPI [NodeMailer]
   const emailSender = EmailSender.getInstance();
   emailSender.activate();
   emailSender.setEmailApi(new NodemailerEmailApi());
->>>>>>> b7dfdc2420bdfa029a26d74b4a789dd42af720d4
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();

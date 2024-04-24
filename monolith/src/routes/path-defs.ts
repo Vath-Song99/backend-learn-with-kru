@@ -3,7 +3,7 @@
 // export const PATH_OK = "/ok"
 
 export const PATH_AUTH = {
-    signUp: "/auth/sign",
+    signUp: "/auth/signup",
     verify: "/auth/verify",
     googleOauth: "/auth/google",
     googleOauthCallBack: "/auth/google/callback"
