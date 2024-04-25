@@ -56,7 +56,7 @@ export class AuthController {
   }
 
   @SuccessResponse(StatusCode.OK, "OK")
-  @Post(PATH_AUTH.googleOauth)
+  @Post(PATH_AUTH.googleOAuthCallBack)
   async GoogleOAuth(code: string) {
     try {
       const authService = new AuthServices();
@@ -65,6 +65,19 @@ export class AuthController {
       return user;
     } catch (error: unknown) {
       throw error;
+    }
+  }
+
+  @SuccessResponse(StatusCode.OK, "OK")
+  @Get(PATH_AUTH.facebookOAuthCallBack)
+  async FacebookOAuth(code : string){
+    try{
+      const authService = new AuthServices();
+      const newUser = await authService.SigninWithFacebookCallBack(code)
+
+      return newUser
+    }catch(error: unknown) {
+      throw error
     }
   }
 }
