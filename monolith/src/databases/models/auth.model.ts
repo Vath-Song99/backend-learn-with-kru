@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import mongoose, { Schema } from "mongoose";
 
 const authSchemas = new mongoose.Schema({
@@ -28,6 +29,15 @@ const authSchemas = new mongoose.Schema({
         type: Boolean,
         default: false,
       },
+    googleId: {
+        type: String,
+    },
+    facebookId: {
+        type: String
+    },
+    profile: {
+        type: String
+    }
 })
 
 export const authModel = mongoose.model("auths", authSchemas);

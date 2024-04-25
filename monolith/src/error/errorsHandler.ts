@@ -6,8 +6,11 @@ export const errorHandler = async (error: Error, req: Request, res: Response, _n
     if(error instanceof BaseCustomError){
     const status = error.statusCode;
         res.status(status).json({
-            statusCode: status,
-            message: error.message,
+            success: false,
+            error: {
+                message: error.message,
+                code: status
+              }
         })
     }
     _next()

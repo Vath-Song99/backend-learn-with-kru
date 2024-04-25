@@ -19,7 +19,7 @@ async function run() {
           : "../configs/.env.production"
     );
     const config = createConfig(configPath);
-    console.log("env", config);
+
   // Activate Email Sender with EmailAPI [NodeMailer]
   const emailSender = EmailSender.getInstance();
   emailSender.activate();
@@ -30,7 +30,6 @@ async function run() {
     await mongodb.connect({ url: config.mongo.url as string });
     // Start Server
     const server = app.listen(config.port, () => {
-      console.log("Server is listening on port: ", config.port);
     });
     const exitHandler = async () => {
       if (server) {

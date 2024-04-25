@@ -2,8 +2,14 @@
   "dependencies": {
     "@tsoa/runtime": "^6.2.1",
     "@types/nodemailer": "^6.4.14",
-    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+
+    "@tsoa/runtime": "^6.2.0",
+    "@types/axios": "^0.14.0",
+    "axios": "^1.6.8",
+    "bcrypt": "^5.1.1",
+    "bcrypt-ts": "^5.0.2",
+
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -25,6 +31,7 @@
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
+    "@types/nodemailer": "^6.4.14",
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.6",
     "jest": "^29.7.0",

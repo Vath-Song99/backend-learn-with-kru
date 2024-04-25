@@ -11,7 +11,7 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "AuthControllerType": {
+    "User": {
         "dataType": "refObject",
         "properties": {
             "firstname": {"dataType":"string","required":true},
@@ -43,11 +43,13 @@ export function RegisterRoutes(app: Router) {
     // ###########################################################################################################
         app.post('/api/v1/auth/signup',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.createAuth)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.CreateAuth)),
+
 
             async function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {
+
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AuthControllerType"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"User"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -60,6 +62,7 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'createAuth',
+
                 controller,
                 response,
                 next,
@@ -101,6 +104,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
         app.post('/api/v1/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.LoginWithEmail)),
@@ -108,6 +112,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_LoginWithEmail(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     authdata: {"in":"body","name":"authdata","required":true,"ref":"Authlogin"},
+
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -118,13 +123,17 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
+
               await templateService.apiHandler({
                 methodName: 'LoginWithEmail',
+
                 controller,
                 response,
                 next,
                 validatedArgs,
-                successStatus: 201,
+
+                successStatus: 200,
+
               });
             } catch (err) {
                 return next(err);

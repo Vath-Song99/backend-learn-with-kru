@@ -7,7 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"AuthControllerType": {
+			"User": {
 				"properties": {
 					"firstname": {
 						"type": "string"
@@ -82,7 +82,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AuthControllerType"
+								"$ref": "#/components/schemas/User"
 							}
 						}
 					}
@@ -115,6 +115,7 @@
 				]
 			}
 		},
+
 		"/api/v1/auth/login": {
 			"post": {
 				"operationId": "LoginWithEmail",
@@ -135,6 +136,7 @@
 						}
 					}
 				}
+
 			}
 		}
 	},

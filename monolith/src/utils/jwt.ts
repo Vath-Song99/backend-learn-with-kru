@@ -13,14 +13,14 @@ export const generatePassword = async (password: string) => {
   }
 };
 
-export const generateSignature = async (payload: object): Promise<string> => {
+export const generateSignature = async ({payload}: {payload: string | object}): Promise<string> => {
+
   try {
-    return await jwt.sign(payload, process.env.APP_SECRET as string, {
-      expiresIn: "30d",
-    });
-  } catch (error) {
+    const token = jwt.sign(payload, process.env.SECRET_KEY as string);  
+    return  token
+  } catch (error: unknown | string) {
     throw new BaseCustomError(
-      "Unable to generate signature from jwt",
+      error as string,
       StatusCode.NOT_ACCEPTABLE
     );
   }

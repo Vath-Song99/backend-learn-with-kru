@@ -11,7 +11,7 @@ export interface IAccountVerificationModel
   extends Model<IAccountVerificationDocument> {}
 
 const accountVerificationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  authId: { type: mongoose.Schema.Types.ObjectId, required: true },
   emailVerificationToken: {
     type: String,
     required: true,
