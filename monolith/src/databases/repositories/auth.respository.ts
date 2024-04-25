@@ -3,6 +3,7 @@ import { AuthUserRepo, OauthUserRepo } from "../@types/repo-type";
 import { ApiError, BaseCustomError } from "../../utils/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
 import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 export class AuthRepository {
   async CreateAuthUser({
     firstname,
@@ -39,10 +40,6 @@ export class AuthRepository {
     googleId,
     verified_email, profile}: OauthUserRepo) {
       try{
-        const existingUser = await this.FindUserByEmail({ email });
-        if (existingUser) {
-          throw new BaseCustomError("Email already exists", StatusCode.FORBIDDEN);
-        }
         
         const user = new authModel({
           firstname,
@@ -62,6 +59,10 @@ export class AuthRepository {
         throw error
       }
     }
+
+  // async CreateOauthUser({
+
+  // })
   async FindUserByEmail({ email }: { email: string }) {
     try {
       const existingUser = await authModel.findOne({ email: email });
@@ -73,12 +74,25 @@ export class AuthRepository {
       );
     }
   }
-  async FindUserById({ id }: { id: Types.ObjectId }) {
+  async FindUserById({ id }: { id: ObjectId }) {
     try {
-      const existingUser = await authModel.findById(id);
+      const existingUser = await authModel.findById({_id: id});
+    
       return existingUser;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async FindUserByFacebookId ({facebookId} :{ facebookId: string}) {
+    try{
+      const existingUser = await authModel.findOne({
+        facebookId: facebookId
+      })
+
+      return existingUser
+    }catch(error: unknown){
+      throw new ApiError(error as string )
     }
   }
 }

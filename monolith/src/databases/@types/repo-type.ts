@@ -4,7 +4,8 @@ export interface AuthUserRepo extends User{
    
 }
 export interface OauthUserRepo extends User{
-    googleId: string;
+    googleId?: string;
+    facebookId?: string;
     verified_email: boolean;
     profile: string
 }

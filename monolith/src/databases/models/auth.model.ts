@@ -31,6 +31,9 @@ const authSchemas = new mongoose.Schema({
     googleId: {
         type: String,
     },
+    facebookId: {
+        type: String
+    },
     profile: {
         type: String
     }

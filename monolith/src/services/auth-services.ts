@@ -8,7 +8,7 @@ import StatusCode from "../utils/http-status-code";
 import { generatePassword, generateSignature } from "../utils/jwt";
 import { AuthService } from "./@types/auth-service";
 import { AccountVerificationRepository } from "../databases/repositories/account-verification.repository";
-import { GoogleOauthConfig } from "../utils/oauth-configs";
+import { OauthConfig } from "../utils/oauth-configs";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -119,13 +119,13 @@ export class AuthServices {
 
     try {
       // step 1
-      const googleConfig = await GoogleOauthConfig.getInstance();
+      const googleConfig = await OauthConfig.getInstance();
       const tokenResponse = await googleConfig.GoogleStrategy(code);
 
       // step 2
       const accessToken = tokenResponse.access_token;
       // step 3
-      const userInfoResponse = await googleConfig.AccessInfo(accessToken);
+      const userInfoResponse = await googleConfig.GoogleAccessInfo(accessToken);
 
       // stept 4
       const { given_name, family_name, email, id, verified_email , profile } =
@@ -155,6 +155,52 @@ export class AuthServices {
         throw error;
       }
       throw new ApiError("Unable to Singin with google");
+    }
+  }
+
+  async SigninWithFacebookCallBack(code: string) {
+    //********************* */\
+    // 1. config facebook strategy
+    // 2. destruce access_token from data
+    // 3. access data from facebook api
+    // 4. create user into database
+    // 5. generate jwt token for user
+    //*********************** */
+    try {
+      // step 1
+      const config = await OauthConfig.getInstance();
+      const data: any = await config.FacebookStrategy(code);
+      // step 2
+      const { access_token } = data;
+
+      // step 3
+      const profile = await config.FacebookAccessInfo(access_token);
+      console.log(profile)
+
+      const {id , name ,first_name , last_name , email , picture} = profile.data
+      // step 4
+      const existingUser = await this.AuthRepo.FindUserByFacebookId({facebookId: id});
+      if(existingUser){
+        const jwtToken = await generateSignature({payload: id})
+        return {jwtToken}
+      }
+      
+      const newUser = await this.AuthRepo.CreateOauthUser({
+        firstname: first_name,
+        lastname: last_name,
+        email,
+        facebookId: id,
+        verified_email: true,
+        profile: picture
+      });
+
+      console.log(newUser)
+      // step 5
+      const jwtToken = await generateSignature({payload: profile.data.id})
+
+      return {profile: profile.data , jwtToken}
+    } catch (error: unknown) {
+      throw error;
     }
   }
 }
