@@ -13,7 +13,7 @@ Route.post(PATH_AUTH.signUp, userValidate(userValidateSchema) , async (req: Requ
     try{
         const controller = new AuthController();
         const requestBody = req.body;
-        const respone = await controller.CreateAuth(requestBody);
+        const respone = await controller.Singup(requestBody);
 
         res.status(StatusCode.OK).json({
             messaage: 'success',

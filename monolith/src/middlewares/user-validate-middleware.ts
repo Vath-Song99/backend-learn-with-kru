@@ -6,26 +6,19 @@ import { Schema, ZodError } from "zod";
 export const userValidate = (schema: Schema) => {
   return async (req: Request, res: Response, _next: NextFunction) => {
     try {
-      const { firstname,lastname, email, password } = req.body;
-
-      schema.parse({ firstname,lastname, email, password });
-
+      schema.parse(req.body);
       _next();
     } catch (error: unknown) {
+     
+
       if (error instanceof ZodError) {
-        _next(
-          new BaseCustomError(
-            "username or password is invalid",
-            StatusCode.BAD_REQUEST
-          )
-        );
+        const errorMessages = error.errors.map((issue) => ({
+          message: `${issue.path.join(".")} is ${issue.message}`,
+        }));
+        res
+          .status(StatusCode.UNPROCESSABLE_ENTITY)
+          .json({ error: "Invalid data", details: errorMessages });
       }
-      _next(
-        new BaseCustomError(
-          "Somthing went wrong!",
-          StatusCode.INTERNAL_SERVER_ERROR
-        )
-      );
     }
   };
 };

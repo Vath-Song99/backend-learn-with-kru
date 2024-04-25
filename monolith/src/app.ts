@@ -5,7 +5,13 @@ import { errorHandler } from './error/errorsHandler';
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "../public/swagger.json";
 import { RegisterRoutes } from './routes/v1/routes';
+
+import path from 'path';
+import { corsOptions } from './utils/cors-options';
+import cors from 'cors';
+
 import Route from './routes/v1/auth.route';
+
 
 //app
 dotenv.config({path: 'configs/.env'});
@@ -15,7 +21,8 @@ const AUTH_ROUTE = process.env.ROUTE as string;
 //global middleware
 app.use(express.static('public'));
 app.use(express.json())
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
 
 // RegisterRoutes(app);
 const ROUTE = "/api/v1"
@@ -28,5 +35,5 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //error handler globale middleware
 app.use(errorHandler)
-
+app.use(cors(corsOptions));
 export default app

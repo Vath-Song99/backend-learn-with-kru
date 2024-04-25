@@ -30,6 +30,22 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Authlogin": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -81,17 +97,7 @@
 						"description": "OK",
 						"content": {
 							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -109,16 +115,28 @@
 				]
 			}
 		},
-		"/api/v1/auth/google": {
+
+		"/api/v1/auth/login": {
 			"post": {
-				"operationId": "GoogleOAuth",
+				"operationId": "LoginWithEmail",
 				"responses": {
-					"200": {
-						"description": "OK"
+					"201": {
+						"description": "CREATE"
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Authlogin"
+							}
+						}
+					}
+				}
+
 			}
 		}
 	},

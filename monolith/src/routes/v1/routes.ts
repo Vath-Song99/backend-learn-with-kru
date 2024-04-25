@@ -22,6 +22,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Authlogin": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -36,7 +45,9 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.CreateAuth)),
 
-            function AuthController_CreateAuth(request: ExRequest, response: ExResponse, next: any) {
+
+            async function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {
+
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"User"},
             };
@@ -49,8 +60,9 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
-              templateService.apiHandler({
-                methodName: 'CreateAuth',
+              await templateService.apiHandler({
+                methodName: 'createAuth',
+
                 controller,
                 response,
                 next,
@@ -66,7 +78,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.VerifyEmail)),
 
-            function AuthController_VerifyEmail(request: ExRequest, response: ExResponse, next: any) {
+            async function AuthController_VerifyEmail(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     token: {"in":"query","name":"token","required":true,"dataType":"string"},
             };
@@ -79,7 +91,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'VerifyEmail',
                 controller,
                 response,
@@ -92,12 +104,15 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/api/v1/auth/google',
-            ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.GoogleOAuth)),
 
-            function AuthController_GoogleOAuth(request: ExRequest, response: ExResponse, next: any) {
+        app.post('/api/v1/auth/login',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.LoginWithEmail)),
+
+            async function AuthController_LoginWithEmail(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    authdata: {"in":"body","name":"authdata","required":true,"ref":"Authlogin"},
+
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -108,13 +123,17 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
-              templateService.apiHandler({
-                methodName: 'GoogleOAuth',
+
+              await templateService.apiHandler({
+                methodName: 'LoginWithEmail',
+
                 controller,
                 response,
                 next,
                 validatedArgs,
+
                 successStatus: 200,
+
               });
             } catch (err) {
                 return next(err);
