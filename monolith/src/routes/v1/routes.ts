@@ -22,6 +22,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Authlogin": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string","required":true},
+            "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -36,7 +45,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.createAuth)),
 
-            function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {
+            async function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AuthControllerType"},
             };
@@ -49,7 +58,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'createAuth',
                 controller,
                 response,
@@ -66,7 +75,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.VerifyEmail)),
 
-            function AuthController_VerifyEmail(request: ExRequest, response: ExResponse, next: any) {
+            async function AuthController_VerifyEmail(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     token: {"in":"query","name":"token","required":true,"dataType":"string"},
             };
@@ -79,13 +88,43 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new AuthController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'VerifyEmail',
                 controller,
                 response,
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/api/v1/auth/login',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.LoginWithEmail)),
+
+            async function AuthController_LoginWithEmail(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    authdata: {"in":"body","name":"authdata","required":true,"ref":"Authlogin"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'LoginWithEmail',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
               });
             } catch (err) {
                 return next(err);

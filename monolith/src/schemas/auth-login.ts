@@ -1,7 +1,5 @@
 import { z } from 'zod'
-const userValidateSchema = z.object({
-    firstname: z.string().min(3).max(25),
-    lastname: z.string().min(3).max(25),
+const authLoginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, "Password must be at least 8 characters long")
     .regex(
@@ -10,5 +8,5 @@ const userValidateSchema = z.object({
       ),
 });
 
-export type UserValidateZodType = z.infer<typeof userValidateSchema>
-export {userValidateSchema}
+export type UserValidateZodType = z.infer<typeof authLoginSchema>
+export {authLoginSchema}

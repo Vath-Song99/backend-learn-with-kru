@@ -22,7 +22,7 @@ const accountVerificationSchema = new mongoose.Schema({
   },
   expired_at: {
     type: Date,
-    default: Date.now,
+    required: true,
   }
 });
 
