@@ -91,7 +91,8 @@ Route.get(
     }catch(error: unknown){
       _next(error)
     }
-  })
+  });
+
 
 
 export default Route

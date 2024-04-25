@@ -9,4 +9,6 @@ export const PATH_AUTH = {
     googleOAuthCallBack: "/auth/google/callback",
     facebookOAuth: "/auth/facebook",
     facebookOAuthCallBack: "/auth/facebook/callback",
+    teacherList: ""
+
 }
