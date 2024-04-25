@@ -25,3 +25,22 @@ export const generateSignature = async ({payload}: {payload: string | object}): 
     );
   }
 };
+
+
+export const validatePassword = async ({
+  enteredPassword,
+  savedPassword,
+}: {
+  enteredPassword: string;
+  savedPassword: string;
+}) => {
+  try {
+    const isPasswordCorrect = await bcrypt.compare(
+      enteredPassword,
+      savedPassword
+    );
+    return isPasswordCorrect;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -881,12 +881,12 @@
   resolved "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.4.tgz"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
-"@tsoa/cli@^6.2.0":
-  version "6.2.0"
-  resolved "https://registry.npmjs.org/@tsoa/cli/-/cli-6.2.0.tgz"
-  integrity sha512-kzr10MsARpuivJl59XD33+sdMA18Rx9KBu7NCp18nV6kPQ1LDrVBwVgLL96w7lBgUGsCgVJ1/cUePW313uTZCw==
+"@tsoa/cli@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/@tsoa/cli/-/cli-6.2.1.tgz"
+  integrity sha512-SS28cvL2uurau2PZbBO8Ks6O9LF497iMlnUfMr7hffbgxh81SftfG+qvddeniNw0ttSB593Mljvv+fPabEbrfQ==
   dependencies:
-    "@tsoa/runtime" "^6.2.0"
+    "@tsoa/runtime" "^6.2.1"
     "@types/multer" "^1.4.11"
     fs-extra "^11.2.0"
     glob "^10.3.10"
@@ -899,10 +899,10 @@
     yaml "^2.4.1"
     yargs "^17.7.1"
 
-"@tsoa/runtime@^6.2.0":
-  version "6.2.0"
-  resolved "https://registry.npmjs.org/@tsoa/runtime/-/runtime-6.2.0.tgz"
-  integrity sha512-iXSi5rDZWcPRcLKa9WaMBUdh4SdDN+9Cmy+R7i/DSCtFtbtUqE+ui+IMV9o6+759N6J3FqGBaPWa9kAtOrL4sA==
+"@tsoa/runtime@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/@tsoa/runtime/-/runtime-6.2.1.tgz"
+  integrity sha512-YOA7ha6W6GQsSr3Pvb5omb5AwizvQd7GUu54Oi2TjNWYOzfczBROZonReMfKBiNULiZBDmEc5r1Hs+Kbbfjgyw==
   dependencies:
     "@hapi/boom" "^10.0.1"
     "@hapi/hapi" "^21.3.3"
@@ -1000,6 +1000,18 @@
     "@types/express" "*"
     "@types/keygrip" "*"
     "@types/node" "*"
+
+"@types/cors@^2.8.17":
+  version "2.8.17"
+  resolved "https://registry.npmjs.org/@types/cors/-/cors-2.8.17.tgz"
+  integrity sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==
+  dependencies:
+    "@types/node" "*"
+
+"@types/ejs@^3.1.5":
+  version "3.1.5"
+  resolved "https://registry.npmjs.org/@types/ejs/-/ejs-3.1.5.tgz"
+  integrity sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==
 
 "@types/express-serve-static-core@^4.17.33":
   version "4.19.0"
@@ -1701,6 +1713,14 @@ cookiejar@^2.1.4:
   version "2.1.4"
   resolved "https://registry.npmjs.org/cookiejar/-/cookiejar-2.1.4.tgz"
   integrity sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==
+
+cors@^2.8.5:
+  version "2.8.5"
+  resolved "https://registry.npmjs.org/cors/-/cors-2.8.5.tgz"
+  integrity sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==
+  dependencies:
+    object-assign "^4"
+    vary "^1"
 
 create-jest@^29.7.0:
   version "29.7.0"
@@ -3328,7 +3348,7 @@ npmlog@^5.0.1:
     gauge "^3.0.0"
     set-blocking "^2.0.0"
 
-object-assign@^4.1.1:
+object-assign@^4, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
   integrity sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==
@@ -4023,13 +4043,13 @@ ts-node@^10.9.2, ts-node@>=9.0.0:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-tsoa@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.npmjs.org/tsoa/-/tsoa-6.2.0.tgz"
-  integrity sha512-EX/RyoU+4hD1rLM5NjYG+I7lEhqx1yuLgcHs/gyWQpkX/RL9cVR9hFA9LKQrK6PE+WTg1SEahn1MK3l/+6pVKw==
+tsoa@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.npmjs.org/tsoa/-/tsoa-6.2.1.tgz"
+  integrity sha512-cK+Wmw99IdkVMuNPl8OM+SufIxvS1b5XY9mwjLrTJ4ytwiUkF1AOKvF6pX5k/xDnHXFLCrfHzbgaogj0JJO9EA==
   dependencies:
-    "@tsoa/cli" "^6.2.0"
-    "@tsoa/runtime" "^6.2.0"
+    "@tsoa/cli" "^6.2.1"
+    "@tsoa/runtime" "^6.2.1"
 
 type-detect@4.0.8:
   version "4.0.8"
@@ -4116,7 +4136,7 @@ validator@^13.11.0:
   resolved "https://registry.npmjs.org/validator/-/validator-13.11.0.tgz"
   integrity sha512-Ii+sehpSfZy+At5nPdnyMhx78fEoPDkR2XW/zimHEL3MyGJQOCQ7WeP20jPYRz7ZCpcKLB21NxuXHF3bxjStBQ==
 
-vary@~1.1.2:
+vary@^1, vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==

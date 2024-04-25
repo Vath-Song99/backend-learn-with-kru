@@ -1,6 +1,4 @@
-// export const PATH_SIGNUP = "/auth/signup"   
-// export const PATH_VERIFY = "/auth/verify"   
-// export const PATH_OK = "/ok"
+
 
 export const PATH_AUTH = {
     signUp: "/auth/signup",
@@ -10,3 +8,4 @@ export const PATH_AUTH = {
     facebookOAuth: "/auth/facebook",
     facebookOAuthCallBack: "/auth/facebook/callback",
 }
+
