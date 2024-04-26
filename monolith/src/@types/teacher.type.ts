@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export interface Teacher{
     first_name: string;
     last_name: string;
@@ -11,5 +13,9 @@ export interface Teacher{
     bio: string;
     teacher_experience: string;
     motivate: string;
-    date_available: object
+    date_available: object;
+    price: number;
+    certificate: string;
+    class_id: mongoose.ObjectId;
+    video: string
 }
