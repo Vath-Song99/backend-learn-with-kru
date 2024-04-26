@@ -43,7 +43,7 @@ export function RegisterRoutes(app: Router) {
     // ###########################################################################################################
         app.post('/api/v1/auth/signup',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.CreateAuth)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.Singup)),
 
 
             async function AuthController_createAuth(request: ExRequest, response: ExResponse, next: any) {

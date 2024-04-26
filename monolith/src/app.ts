@@ -9,7 +9,7 @@ import path from "path";
 import { corsOptions } from "./utils/cors-options";
 import cors from "cors";
 import AuthRoute from "./routes/v1/auth.route";
-import TeacherRoute from "./routes/v1/teacher-list.route";
+import TeacherRoute from "./routes/v1/teacher.route";
 
 //app
 dotenv.config({ path: "configs/.env" });

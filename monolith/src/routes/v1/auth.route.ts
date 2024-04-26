@@ -2,14 +2,14 @@ import { NextFunction,Request, Response, Router } from "express";
 import { PATH_AUTH } from "../path-defs";
 import { AuthController } from "../../controllers/auth.controller";
 import StatusCode from "../../utils/http-status-code";
-import { userValidate } from "../../middlewares/user-validate-middleware";
-import { userValidateSchema } from "../../schemas/user-validate";
+import {  zodValidate } from "../../middlewares/user-validate-middleware";
+import { userValidateSchema } from "../../schemas/auth-validate";
 import {  OauthConfig } from "../../utils/oauth-configs";
 
 // Route
 const AuthRoute = Router()
 
-AuthRoute.post(PATH_AUTH.signUp, userValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
+AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
     try{
         const controller = new AuthController();
         const requestBody = req.body;
@@ -45,13 +45,13 @@ AuthRoute.get(
   AuthRoute.get(
     PATH_AUTH.googleOAuthCallBack,
     async (req: Request, res: Response, _next: NextFunction) => {
+      const { code } = req.query;
         try {
   
-          const { code } = req.query;
           const queryCode = code as string;
           const controller = new AuthController()
           const userInfoResponse = await controller.GoogleOAuth(queryCode);
-  
+          
           res.status(StatusCode.OK).json({
             success: true,
             user: userInfoResponse.newUser,

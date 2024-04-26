@@ -3,6 +3,8 @@ import { PATH_TEACHER } from "../path-defs";
 import { TeacherController } from "../../controllers/teacher.controller";
 import StatusCode from "../../utils/http-status-code";
 import { Paginate } from "../../@types/paginate.type";
+import { zodValidate } from "../../middlewares/user-validate-middleware";
+import { teacherSchemas } from "../../schemas/teacher-validate";
 
 const TeacherRoute = Router();
 
@@ -32,5 +34,20 @@ TeacherRoute.get(
     }
   }
 );
+
+TeacherRoute.post(PATH_TEACHER.teachersignup , zodValidate(teacherSchemas) , async (req: Request , res: Response ,_next: NextFunction) =>{
+  const requestBody = req.body;
+  try{
+    const controller = new TeacherController();
+    const newUser = await controller.TeacherSingup(requestBody)
+
+    res.status(StatusCode.CREATED).json({
+      success: true,
+      teacher: newUser
+    })
+  }catch(error: unknown){
+    _next(error)
+  }
+})
 
 export default TeacherRoute;

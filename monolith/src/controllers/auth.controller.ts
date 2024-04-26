@@ -1,10 +1,9 @@
-import { userValidate } from "../middlewares/user-validate-middleware";
+import { zodValidate } from "../middlewares/user-validate-middleware";
 import { PATH_AUTH } from "../routes/path-defs";
-import { userValidateSchema } from "../schemas/user-validate";
+import { authLoginSchema, userValidateSchema } from "../schemas/auth-validate";
 import { AuthServices } from "../services/auth-services";
 import StatusCode from "../utils/http-status-code";
 import { generateSignature } from "../utils/jwt";
-import { authLoginSchema } from "../schemas/auth-login";
 import { User } from "../@types/user.type";
 import {
   Get,
@@ -21,7 +20,7 @@ import { UserLogin } from "./@types/auth-controller-type";
 export class AuthController {
   @Post(PATH_AUTH.signUp)
   @SuccessResponse(StatusCode.CREATED, "Created")
-  @Middlewares(userValidate(userValidateSchema))
+  @Middlewares(zodValidate(userValidateSchema))
   public async Singup(@Body() requestBody: User): Promise<any> {
     try {
       const authService = new AuthServices();
@@ -52,7 +51,7 @@ export class AuthController {
 
   @Post(PATH_AUTH.login)
   @SuccessResponse(StatusCode.OK, "OK")
-  @Middlewares(userValidate(authLoginSchema))
+  @Middlewares(zodValidate(authLoginSchema))
   public async LoginWithEmail(
     @Body() authdata: UserLogin
   ): Promise<{ message: string }> {
