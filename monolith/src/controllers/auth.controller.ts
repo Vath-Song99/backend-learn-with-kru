@@ -4,7 +4,6 @@ import { userValidateSchema } from "../schemas/user-validate";
 import { AuthServices } from "../services/auth-services";
 import StatusCode from "../utils/http-status-code";
 import { generateSignature } from "../utils/jwt";
-import { BaseCustomError } from "../utils/base-custom-error";
 import { authLoginSchema } from "../schemas/auth-login";
 import { User } from "../@types/user.type";
 import {
@@ -16,27 +15,14 @@ import {
   Body,
   Query,
 } from "tsoa";
-
-interface AuthControllerType {
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-}
-
-interface AuthLogin {
-  email: string;
-  password: string;
-}
+import { UserLogin } from "./@types/auth-controller-type";
 
 @Route("/api/v1")
 export class AuthController {
   @Post(PATH_AUTH.signUp)
   @SuccessResponse(StatusCode.CREATED, "Created")
   @Middlewares(userValidate(userValidateSchema))
-  public async Singup(
-    @Body() requestBody: AuthControllerType
-  ): Promise<any> {
+  public async Singup(@Body() requestBody: User): Promise<any> {
     try {
       const authService = new AuthServices();
       const users = await authService.Signup(requestBody);
@@ -68,7 +54,7 @@ export class AuthController {
   @SuccessResponse(StatusCode.OK, "OK")
   @Middlewares(userValidate(authLoginSchema))
   public async LoginWithEmail(
-    @Body() authdata: AuthLogin
+    @Body() authdata: UserLogin
   ): Promise<{ message: string }> {
     try {
       const authService = new AuthServices();

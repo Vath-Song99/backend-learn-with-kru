@@ -7,9 +7,9 @@ import { userValidateSchema } from "../../schemas/user-validate";
 import {  OauthConfig } from "../../utils/oauth-configs";
 
 // Route
-const Route = Router()
+const AuthRoute = Router()
 
-Route.post(PATH_AUTH.signUp, userValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
+AuthRoute.post(PATH_AUTH.signUp, userValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
     try{
         const controller = new AuthController();
         const requestBody = req.body;
@@ -25,7 +25,7 @@ Route.post(PATH_AUTH.signUp, userValidate(userValidateSchema) , async (req: Requ
     
 })
 
-Route.get(
+AuthRoute.get(
     PATH_AUTH.googleOAuth,
     async (req: Request, res: Response, _next: NextFunction) => {
       const redirectUri = process.env.GOOGLE_REDIRECT_URI as string;
@@ -42,7 +42,7 @@ Route.get(
   );
   
   //Signin callback with google
-  Route.get(
+  AuthRoute.get(
     PATH_AUTH.googleOAuthCallBack,
     async (req: Request, res: Response, _next: NextFunction) => {
         try {
@@ -63,7 +63,7 @@ Route.get(
       }
   );
 
-  Route.get(PATH_AUTH.facebookOAuth, async(req: Request , res: Response , _next: NextFunction) =>{
+  AuthRoute.get(PATH_AUTH.facebookOAuth, async(req: Request , res: Response , _next: NextFunction) =>{
     try {
       const redirectUri = process.env.FACEBOOK_REDIRECT_URI as string;
       const clienId = process.env.FACEBOOK_APP_ID as string;
@@ -76,7 +76,7 @@ Route.get(
     }
   })
 
-  Route.get(PATH_AUTH.facebookOAuthCallBack, async(req: Request , res: Response ,_next: NextFunction) =>{
+  AuthRoute.get(PATH_AUTH.facebookOAuthCallBack, async(req: Request , res: Response ,_next: NextFunction) =>{
     try{
       const { code } = req.query;
       const queryCode = code as string;
@@ -95,5 +95,5 @@ Route.get(
 
 
 
-export default Route
+export default AuthRoute
 
