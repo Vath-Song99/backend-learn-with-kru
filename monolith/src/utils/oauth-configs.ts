@@ -63,7 +63,6 @@ export class OauthConfig {
       redirect_uri: process.env.FACEBOOK_REDIRECT_URI as string,
       code,
     };
-    console.log(requestBody);
     const url = "https://graph.facebook.com/v13.0/oauth/access_token";
     try {
       return await this.getToken(requestBody, url);
@@ -76,10 +75,7 @@ export class OauthConfig {
     try {
       const userInfoResponse = await axios.get(url, {
         headers: { Authorization: `Bearer ${access_token}` },
-        params: {
-          access_token,
-          fields: "id,name,email,first_name,last_name,picture",
-        },
+       
       });
       return userInfoResponse;
     } catch (error: unknown) {
@@ -90,7 +86,7 @@ export class OauthConfig {
   async GoogleAccessInfo(access_token: string) {
     const url = "https://www.googleapis.com/oauth2/v2/userinfo";
     try {
-      return await this.AccessInfo({ access_token: access_token, url: url });
+      return await this.AccessInfo({ access_token, url });
     } catch (error: unknown) {
       throw error;
     }
