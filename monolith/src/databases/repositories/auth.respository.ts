@@ -17,14 +17,17 @@ export class AuthRepository {
         throw new BaseCustomError("Email already exists", StatusCode.FORBIDDEN);
       }
       
-      const user = new authModel({
+      const user = await authModel.create({
         firstname,
         lastname,
         email,
         password,
       });
-      const userResult = await user.save();
-      return userResult;
+      if(!user){
+        throw new ApiError("Unable to create use in database!")
+      }
+      
+      return await user.save();;
     } catch (error: unknown) {
       throw error;
     }

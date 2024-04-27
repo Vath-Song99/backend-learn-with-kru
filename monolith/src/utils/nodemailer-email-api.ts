@@ -85,7 +85,7 @@ export default class NodemailerEmailApi implements EmailApi {
   private async sendEmail(args: EmailApiSendEmailArgs): Promise<void> {
     const { toEmail, subject, htmlBody, textBody } = args;
     await this.transporter.sendMail({
-      from: "Micro-Auth <noreply@microsauth.app>",
+      from: "Learnwithkru <noreply@microsauth.app>",
       to: toEmail,
       subject,
       text: textBody,

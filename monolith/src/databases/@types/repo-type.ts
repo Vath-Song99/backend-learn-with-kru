@@ -9,4 +9,9 @@ export interface OauthUserRepo extends User{
     verified_email: boolean;
     profile: string
 }
+
+export interface PaginateRepo {
+    pageSize: number;
+    skip: number;
+}
   

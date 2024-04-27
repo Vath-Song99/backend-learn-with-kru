@@ -10,7 +10,12 @@ export class TeacherServices {
 
   async TeacherList(options: Paginate) {
     try {
-      const teachers = await this.teacherRepo.FindAllTeachers(options);
+      const { pageNumber, pageSize } = options as Paginate;
+      const skip = (pageNumber - 1) * pageSize;
+      const teachers = await this.teacherRepo.FindAllTeachers({
+        pageSize,
+        skip,
+      });
       return teachers;
     } catch (error: unknown) {
       throw error;
@@ -56,6 +61,16 @@ export class TeacherServices {
         class_id,
         video,
       });
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
+
+  async FindOneTeacher({ _id }: { _id: string }) {
+    try {
+      const teacher = await this.teacherRepo.FindOneTeacher({_id});
+
+      return teacher
     } catch (error: unknown) {
       throw error;
     }

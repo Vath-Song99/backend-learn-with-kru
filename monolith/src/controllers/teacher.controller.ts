@@ -65,4 +65,14 @@ export class TeacherController {
       throw error;
     }
   }
+
+  async FindOneTeacher ({_id}: {_id: string}){
+    try{
+      const service = new TeacherServices();
+      const teacher = await service.FindOneTeacher({_id})
+      return teacher
+    }catch(error: unknown){
+      throw error
+    }
+  }
 }

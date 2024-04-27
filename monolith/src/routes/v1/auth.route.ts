@@ -1,5 +1,5 @@
 import { NextFunction,Request, Response, Router } from "express";
-import { PATH_AUTH } from "../path-defs";
+import { PATH_AUTH, PATH_TEACHER } from "../path-defs";
 import { AuthController } from "../../controllers/auth.controller";
 import StatusCode from "../../utils/http-status-code";
 import {  zodValidate } from "../../middlewares/user-validate-middleware";
@@ -17,12 +17,29 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
 
         res.status(StatusCode.OK).json({
             messaage: 'success',
-            users: respone
+            users: respone.newUser,
+            token: respone.jwtToken
         })
     }catch(error: unknown){
     _next(error)
     }
     
+});
+
+AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextFunction) =>{
+  const token = req.query.token as string
+  try{
+    const controller = new AuthController();
+    const respone = await controller.Verif
+    yEmail(token);
+
+    res.status(StatusCode.OK).json({
+      success: true,
+      jwtToken: respone.jwtToken
+    })
+  }catch(error: unknown){
+    _next(error)
+  }
 })
 
 AuthRoute.get(

@@ -35,19 +35,41 @@ TeacherRoute.get(
   }
 );
 
-TeacherRoute.post(PATH_TEACHER.teachersignup , zodValidate(teacherSchemas) , async (req: Request , res: Response ,_next: NextFunction) =>{
-  const requestBody = req.body;
-  try{
-    const controller = new TeacherController();
-    const newUser = await controller.TeacherSingup(requestBody)
+TeacherRoute.post(
+  PATH_TEACHER.teachersignup,
+  zodValidate(teacherSchemas),
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const requestBody = req.body;
+    try {
+      const controller = new TeacherController();
+      const newUser = await controller.TeacherSingup(requestBody);
 
-    res.status(StatusCode.CREATED).json({
-      success: true,
-      teacher: newUser
-    })
-  }catch(error: unknown){
-    _next(error)
+      res.status(StatusCode.CREATED).json({
+        success: true,
+        teacher: newUser,
+      });
+    } catch (error: unknown) {
+      _next(error);
+    }
   }
-})
+);
+
+TeacherRoute.get(
+  PATH_TEACHER.teacherProfile,
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const _id = req.query.id as string;
+    try {
+      const controller = new TeacherController();
+      const teacher = await controller.FindOneTeacher({ _id });
+
+      res.status(StatusCode.OK).json({
+        success: true,
+        teacher: teacher,
+      });
+    } catch (error: unknown) {
+      _next(error);
+    }
+  }
+);
 
 export default TeacherRoute;

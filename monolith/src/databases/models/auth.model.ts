@@ -23,7 +23,6 @@ const authSchemas = new mongoose.Schema({
         type: String,
         min: 8,
         max: 35,
-        require: true
     },
     is_verified: {
         type: Boolean,
