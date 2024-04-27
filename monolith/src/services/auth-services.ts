@@ -15,6 +15,7 @@ import { AuthService } from "./@types/auth-service";
 import { AuthRepository } from "../databases/repositories/auth.respository";
 import { ObjectId } from "mongodb";
 import { GenerateTimeExpire } from "../utils/date-generate";
+import { TokenResponse } from "../utils/@types/oauth.type";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -101,7 +102,7 @@ export class AuthServices {
 
       // step 3
       const now = new Date();
-      const inOnSecond = GenerateTimeExpire(now)
+      const inOnSecond = GenerateTimeExpire(now);
       // step 4
       const accountVerification = new AccountVerificationModel({
         authId: authId,
@@ -180,13 +181,12 @@ export class AuthServices {
       const accessToken = tokenResponse.access_token;
 
       const userInfoResponse = await googleConfig.GoogleAccessInfo(accessToken);
-      const { given_name, family_name, email, id, verified_email, profile } =
+      const { given_name, family_name, email, id, verified_email, picture } =
         userInfoResponse.data;
-
       const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
         const jwtToken = await generateSignature({ payload: id });
-        return { jwtToken };
+        return { newUser: user, jwtToken };
       }
 
       const newUser = await this.AuthRepo.CreateOauthUser({
@@ -195,7 +195,7 @@ export class AuthServices {
         email,
         googleId: id,
         verified_email,
-        profile: profile,
+        profile_picture: picture,
       });
       const jwtToken = await generateSignature({ payload: id });
       return { newUser, jwtToken };
@@ -246,33 +246,42 @@ export class AuthServices {
   }
 
   async SigninWithFacebookCallBack(code: string) {
+    //TODO LIST
+    //*********************** */
+    // 1. access token from facebook
+    // 2. take token to access data from facebook user
+    // 3. check existing user if exist generate new token
+    // 4. create new user
+    // 5. generate token
+    //*********************** */
     try {
+      //step 1
       const config = await OauthConfig.getInstance();
-      const data: any = await config.FacebookStrategy(code);
+      const data: TokenResponse = await config.FacebookStrategy(code);
       const { access_token } = data;
 
+      //step 2
       const profile = await config.FacebookAccessInfo(access_token);
 
       const { id, first_name, last_name, email, picture } = profile.data;
-
+      // step 3
       const existingUser = await this.AuthRepo.FindUserByFacebookId({
         facebookId: id,
       });
-
       if (existingUser) {
         const jwtToken = await generateSignature({ payload: id });
-        return { jwtToken };
+        return { profile: existingUser, jwtToken };
       }
-
+      //step 4
       const newUser = await this.AuthRepo.CreateOauthUser({
         firstname: first_name,
         lastname: last_name,
         email,
         facebookId: id,
         verified_email: true,
-        profile: picture,
+        profile_picture: picture.data.url,
       });
-
+      //step 5
       const jwtToken = await generateSignature({ payload: id });
 
       return { profile: newUser, jwtToken };

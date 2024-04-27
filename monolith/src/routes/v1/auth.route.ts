@@ -83,7 +83,6 @@ AuthRoute.get(
     try {
       const redirectUri = process.env.FACEBOOK_REDIRECT_URI as string;
       const clienId = process.env.FACEBOOK_APP_ID as string;
-      
       const facebookConfig = await OauthConfig.getInstance()
       const authUrl = await facebookConfig.FacebookConfigUrl(clienId, redirectUri);
       res.redirect(authUrl);

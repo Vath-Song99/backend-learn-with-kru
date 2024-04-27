@@ -5,60 +5,59 @@ import StatusCode from "../../utils/http-status-code";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 export class AuthRepository {
-  async CreateAuthUser({
-    firstname,
-    lastname,
-    email,
-    password,
-  }: AuthUserRepo) {
+  async CreateAuthUser({ firstname, lastname, email, password }: AuthUserRepo) {
     try {
       const existingUser = await this.FindUserByEmail({ email });
       if (existingUser) {
         throw new BaseCustomError("Email already exists", StatusCode.FORBIDDEN);
       }
-      
+
       const user = await authModel.create({
         firstname,
         lastname,
         email,
         password,
       });
-      if(!user){
-        throw new ApiError("Unable to create use in database!")
+      if (!user) {
+        throw new ApiError("Unable to create use in database!");
       }
-      
-      return await user.save();;
+
+      return await user.save();
     } catch (error: unknown) {
       throw error;
     }
   }
 
-  async CreateOauthUser({ firstname,
+  async CreateOauthUser({
+    firstname,
     lastname,
     email,
     password,
     googleId,
-    verified_email, profile}: OauthUserRepo) {
-      try{
-        
-        const user = new authModel({
-          firstname,
-          lastname,
-          email,
-          password,
-          googleId: googleId,
-          is_verified: verified_email,
-          profile: profile
-        });
-        const userResult = await user.save();
-        if (!user) {
-          throw new ApiError("Unable to create user into Database!");
-        }
-        return userResult;
-      }catch(error: unknown){
-        throw error
+    facebookId,
+    verified_email,
+    profile_picture,
+  }: OauthUserRepo) {
+    try {
+      const user = new authModel({
+        firstname,
+        lastname,
+        email,
+        password,
+        googleId,
+        facebookId,
+        is_verified: verified_email,
+        profile_picture,
+      });
+      const userResult = await user.save();
+      if (!user) {
+        throw new ApiError("Unable to create user into Database!");
       }
+      return userResult;
+    } catch (error: unknown) {
+      throw error;
     }
+  }
 
   // async CreateOauthUser({
 
@@ -76,23 +75,23 @@ export class AuthRepository {
   }
   async FindUserById({ id }: { id: ObjectId }) {
     try {
-      const existingUser = await authModel.findById({_id: id});
-    
+      const existingUser = await authModel.findById({ _id: id });
+
       return existingUser;
     } catch (error) {
       throw error;
     }
   }
 
-  async FindUserByFacebookId ({facebookId} :{ facebookId: string}) {
-    try{
+  async FindUserByFacebookId({ facebookId }: { facebookId: string }) {
+    try {
       const existingUser = await authModel.findOne({
-        facebookId: facebookId
-      })
+        facebookId: facebookId,
+      });
 
-      return existingUser
-    }catch(error: unknown){
-      throw new ApiError(error as string )
+      return existingUser;
+    } catch (error: unknown) {
+      throw new ApiError(error as string);
     }
   }
 }
