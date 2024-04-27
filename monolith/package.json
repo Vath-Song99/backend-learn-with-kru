@@ -1,15 +1,12 @@
 {
   "dependencies": {
-    "@tsoa/runtime": "^6.2.1",
-    "@types/nodemailer": "^6.4.14",
-    "cors": "^2.8.5",
-
     "@tsoa/runtime": "^6.2.0",
     "@types/axios": "^0.14.0",
+    "@types/nodemailer": "^6.4.14",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",
-
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
