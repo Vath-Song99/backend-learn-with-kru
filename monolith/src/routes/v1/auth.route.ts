@@ -10,9 +10,9 @@ import {  OauthConfig } from "../../utils/oauth-configs";
 const AuthRoute = Router()
 
 AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
+  const requestBody = req.body;
     try{
         const controller = new AuthController();
-        const requestBody = req.body;
         const respone = await controller.Singup(requestBody);
 
         res.status(StatusCode.OK).json({

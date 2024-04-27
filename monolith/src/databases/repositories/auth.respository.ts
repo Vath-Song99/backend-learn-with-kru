@@ -24,9 +24,6 @@ export class AuthRepository {
         password,
       });
       const userResult = await user.save();
-      if (!user) {
-        throw new ApiError("Unable to create user into Database!");
-      }
       return userResult;
     } catch (error: unknown) {
       throw error;

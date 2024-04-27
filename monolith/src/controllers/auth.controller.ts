@@ -25,7 +25,6 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const users = await authService.Signup(requestBody);
-      await authService.SendVerifyEmailToken(users._id);
       return users;
     } catch (error) {
       throw error;

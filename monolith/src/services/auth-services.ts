@@ -34,23 +34,7 @@ export class AuthServices {
         email,
         password: hashedPassword,
       });
-      const emailVerificationToken = generateEmailVerificationToken();
-      const now = new Date();
-      const inTwoMinutes = new Date(now.getTime() + 2 * 60 * 1000);
-      const accountVerification = new AccountVerificationModel({
-        userId: newUser._id,
-        emailVerificationToken,
-        expired_at: inTwoMinutes,
-      });
-
-      const newAccountVerification = await accountVerification.save();
-
-      const emailSender = EmailSender.getInstance();
-
-      emailSender.sendSignUpVerificationEmail({
-        toEmail: newUser.email,
-        emailVerificationToken: newAccountVerification.emailVerificationToken,
-      });
+      await this.SendVerifyEmailToken(newUser._id)
 
       return newUser;
     } catch (error: unknown) {
@@ -62,9 +46,12 @@ export class AuthServices {
     try {
       const emailVerificationToken = generateEmailVerificationToken();
 
+      const now = new Date();
+      const inTwoMinutes = new Date(now.getTime() + 2 * 60 * 1000);
       const accountVerification = new AccountVerificationModel({
-        userId,
+        userId: userId,
         emailVerificationToken,
+        expired_at: inTwoMinutes,
       });
 
       const newAccountVerification = await accountVerification.save();
@@ -121,7 +108,6 @@ export class AuthServices {
   }
 
   async SigninWithGoogleCallBack(code: string) {
-
     try {
       const googleConfig = await OauthConfig.getInstance();
       const tokenResponse = await googleConfig.GoogleStrategy(code);
@@ -132,7 +118,7 @@ export class AuthServices {
       const { given_name, family_name, email, id, verified_email, profile } =
         userInfoResponse.data;
 
-      const user = await this.AuthRepo.FindUserByEmail({email});
+      const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
         const jwtToken = await generateSignature({ payload: id });
         return { jwtToken };
