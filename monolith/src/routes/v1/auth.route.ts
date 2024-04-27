@@ -30,8 +30,7 @@ AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextF
   const token = req.query.token as string
   try{
     const controller = new AuthController();
-    const respone = await controller.Verif
-    yEmail(token);
+    const respone = await controller.VerifyEmail(token)
 
     res.status(StatusCode.OK).json({
       success: true,
