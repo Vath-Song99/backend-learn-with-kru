@@ -17,13 +17,11 @@ const authSchemas = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
-        require: true
     },
     password: {
         type: String,
         min: 8,
         max: 35,
-        require: true
     },
     is_verified: {
         type: Boolean,
@@ -35,7 +33,7 @@ const authSchemas = new mongoose.Schema({
     facebookId: {
         type: String
     },
-    profile: {
+    profile_picture: {
         type: String
     }
 })

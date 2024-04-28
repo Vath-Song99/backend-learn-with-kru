@@ -17,6 +17,7 @@ export interface RequestBody {
   client_secret: string;
   redirect_uri: string;
   grant_type?: string;
+  fields?: string;
 }
 
 export interface AccessInfo{

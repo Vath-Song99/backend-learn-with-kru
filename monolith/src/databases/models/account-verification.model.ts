@@ -1,7 +1,8 @@
+import { ObjectId } from "mongodb";
 import mongoose, { Document, Model } from "mongoose";
 
 export interface IAccountVerificationDocument extends Document {
-  userId: mongoose.Types.ObjectId;
+  authId: mongoose.Types.ObjectId;
   emailVerificationToken: string;
   created_at: Date;
   expired_at: Date;
@@ -11,7 +12,7 @@ export interface IAccountVerificationModel
   extends Model<IAccountVerificationDocument> {}
 
 const accountVerificationSchema = new mongoose.Schema({
-  authId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  authId: { type: ObjectId, required: true },
   emailVerificationToken: {
     type: String,
     required: true,

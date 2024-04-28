@@ -13,6 +13,9 @@ import { AccountVerificationRepository } from "../databases/repositories/account
 import { OauthConfig } from "../utils/oauth-configs";
 import { AuthService } from "./@types/auth-service";
 import { AuthRepository } from "../databases/repositories/auth.respository";
+import { ObjectId } from "mongodb";
+import { GenerateTimeExpire } from "../utils/date-generate";
+import { TokenResponse } from "../utils/@types/oauth.type";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -24,64 +27,94 @@ export class AuthServices {
   }
 
   async Signup(auth: AuthService) {
+    // TODO LIST
+    //************************* */
+    // 1. hast password
+    // 2. check existing user
+    // 3. send verify email and handle for exist user
+    // 4. create new user
+    // 5. send verify email
+    // 6. generate jwt token
     try {
       const { firstname, lastname, email, password } = auth;
+      // step 1
       const hashedPassword = await generatePassword(password as string);
 
+      // step 2
+      const existingUser = await this.AuthRepo.FindUserByEmail({ email });
+      if (existingUser) {
+        if (existingUser.is_verified === true) {
+          throw new BaseCustomError(
+            "Your account already signup, please login instead",
+            StatusCode.BAD_REQUEST
+          );
+        }
+        this.SendVerifyEmailToken({
+          authId: existingUser._id,
+          email: existingUser.email as string,
+        });
+        throw new BaseCustomError(
+          "Email was resend, please check your email to verify",
+          StatusCode.BAD_REQUEST
+        );
+      }
+
+      // step 3
       const newUser = await this.AuthRepo.CreateAuthUser({
         firstname,
         lastname,
         email,
         password: hashedPassword,
       });
-      const emailVerificationToken = generateEmailVerificationToken();
-      const now = new Date();
-      const inTwoMinutes = new Date(now.getTime() + 2 * 60 * 1000);
-      const accountVerification = new AccountVerificationModel({
-        userId: newUser._id,
-        emailVerificationToken,
-        expired_at: inTwoMinutes,
+      // step 4
+      await this.SendVerifyEmailToken({
+        authId: newUser._id,
+        email: newUser.email as string,
+      });
+      // step 5
+      const jwtToken = await generateSignature({
+        payload: newUser._id.toString(),
       });
 
-      const newAccountVerification = await accountVerification.save();
-
-      const emailSender = EmailSender.getInstance();
-
-      emailSender.sendSignUpVerificationEmail({
-        toEmail: newUser.email,
-        emailVerificationToken: newAccountVerification.emailVerificationToken,
-      });
-
-      return newUser;
+      return { newUser, jwtToken };
     } catch (error: unknown) {
       throw error;
     }
   }
 
-  async SendVerifyEmailToken(userId: Types.ObjectId) {
+  async SendVerifyEmailToken({
+    authId,
+    email,
+  }: {
+    authId: ObjectId;
+    email: string;
+  }) {
+    //TODO LIST
+    //********************** */
+    // 1. generate token
+    // 2. generate current date
+    // 3. generate date expire
+    // 4. save user to database verify
+    // 6. send email
     try {
+      // step 1
       const emailVerificationToken = generateEmailVerificationToken();
 
+      // step 3
+      const now = new Date();
+      const inOnSecond = GenerateTimeExpire(now);
+      // step 4
       const accountVerification = new AccountVerificationModel({
-        userId,
+        authId: authId,
         emailVerificationToken,
+        expired_at: inOnSecond,
       });
-
       const newAccountVerification = await accountVerification.save();
 
-      const existedUser = await this.AuthRepo.FindUserById({ id: userId });
-
-      if (!existedUser) {
-        throw new BaseCustomError(
-          "User does not exist!",
-          StatusCode.NOT_ACCEPTABLE
-        );
-      }
-
+      // step 5
       const emailSender = EmailSender.getInstance();
-
       emailSender.sendSignUpVerificationEmail({
-        toEmail: existedUser.email,
+        toEmail: email,
         emailVerificationToken: newAccountVerification.emailVerificationToken,
       });
     } catch (error) {
@@ -89,7 +122,7 @@ export class AuthServices {
     }
   }
 
-  async VerifyEmailToken({ token }: { token: string }) {
+  async VerifyEmailToken(token: string) {
     try {
       const isTokenExist =
         await this.accountVerificationRepo.FindVerificationToken({ token });
@@ -101,8 +134,25 @@ export class AuthServices {
         );
       }
 
+      const now = new Date();
+      if (now > isTokenExist.expired_at) {
+        const existAuth = await this.AuthRepo.FindUserById({
+          id: isTokenExist.authId,
+        });
+        await this.SendVerifyEmailToken({
+          authId: existAuth?._id as ObjectId,
+          email: existAuth?.email as string,
+        });
+        await this.accountVerificationRepo.DeleteVerificationToken({ token });
+
+        throw new BaseCustomError(
+          "Verify Token was expire!",
+          StatusCode.UNAUTHORIZED
+        );
+      }
+
       const user = await this.AuthRepo.FindUserById({
-        id: isTokenExist.userId,
+        id: isTokenExist.authId,
       });
 
       if (!user) {
@@ -112,16 +162,18 @@ export class AuthServices {
       user.is_verified = true;
       await user.save();
 
+      const jwtToken = await generateSignature({
+        payload: user._id.toString(),
+      });
       await this.accountVerificationRepo.DeleteVerificationToken({ token });
 
-      return user;
+      return { user, jwtToken };
     } catch (error) {
       throw error;
     }
   }
 
   async SigninWithGoogleCallBack(code: string) {
-
     try {
       const googleConfig = await OauthConfig.getInstance();
       const tokenResponse = await googleConfig.GoogleStrategy(code);
@@ -129,13 +181,12 @@ export class AuthServices {
       const accessToken = tokenResponse.access_token;
 
       const userInfoResponse = await googleConfig.GoogleAccessInfo(accessToken);
-      const { given_name, family_name, email, id, verified_email, profile } =
+      const { given_name, family_name, email, id, verified_email, picture } =
         userInfoResponse.data;
-
-      const user = await this.AuthRepo.FindUserByEmail({email});
+      const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
         const jwtToken = await generateSignature({ payload: id });
-        return { jwtToken };
+        return { newUser: user, jwtToken };
       }
 
       const newUser = await this.AuthRepo.CreateOauthUser({
@@ -144,7 +195,7 @@ export class AuthServices {
         email,
         googleId: id,
         verified_email,
-        profile: profile,
+        profile_picture: picture,
       });
       const jwtToken = await generateSignature({ payload: id });
       return { newUser, jwtToken };
@@ -195,33 +246,42 @@ export class AuthServices {
   }
 
   async SigninWithFacebookCallBack(code: string) {
+    //TODO LIST
+    //*********************** */
+    // 1. access token from facebook
+    // 2. take token to access data from facebook user
+    // 3. check existing user if exist generate new token
+    // 4. create new user
+    // 5. generate token
+    //*********************** */
     try {
+      //step 1
       const config = await OauthConfig.getInstance();
-      const data: any = await config.FacebookStrategy(code);
+      const data: TokenResponse = await config.FacebookStrategy(code);
       const { access_token } = data;
 
+      //step 2
       const profile = await config.FacebookAccessInfo(access_token);
 
       const { id, first_name, last_name, email, picture } = profile.data;
-
+      // step 3
       const existingUser = await this.AuthRepo.FindUserByFacebookId({
         facebookId: id,
       });
-
       if (existingUser) {
         const jwtToken = await generateSignature({ payload: id });
-        return { jwtToken };
+        return { profile: existingUser, jwtToken };
       }
-
+      //step 4
       const newUser = await this.AuthRepo.CreateOauthUser({
         firstname: first_name,
         lastname: last_name,
         email,
         facebookId: id,
         verified_email: true,
-        profile: picture,
+        profile_picture: picture.data.url,
       });
-
+      //step 5
       const jwtToken = await generateSignature({ payload: id });
 
       return { profile: newUser, jwtToken };

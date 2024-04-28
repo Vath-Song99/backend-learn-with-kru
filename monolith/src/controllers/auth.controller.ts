@@ -22,10 +22,10 @@ export class AuthController {
   @SuccessResponse(StatusCode.CREATED, "Created")
   @Middlewares(zodValidate(userValidateSchema))
   public async Singup(@Body() requestBody: User): Promise<any> {
+    const {firstname , lastname , email , password } = requestBody;
     try {
       const authService = new AuthServices();
-      const users = await authService.Signup(requestBody);
-      await authService.SendVerifyEmailToken(users._id);
+      const users = await authService.Signup({firstname , lastname , email , password});
       return users;
     } catch (error) {
       throw error;
@@ -36,14 +36,12 @@ export class AuthController {
   @SuccessResponse(StatusCode.OK, "OK")
   public async VerifyEmail(
     @Query() token: string
-  ): Promise<{ message: string }> {
+  ){
     try {
       const authService = new AuthServices();
-      const user = await authService.VerifyEmailToken({ token });
-      const jwtToken = await generateSignature({
-        payload: user._id.toString(),
-      });
-      return { message: "success verify email" };
+      const user = await authService.VerifyEmailToken(token);
+      
+      return user
     } catch (error) {
       throw error;
     }

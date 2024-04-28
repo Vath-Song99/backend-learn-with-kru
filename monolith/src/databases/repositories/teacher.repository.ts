@@ -1,13 +1,15 @@
+import { ObjectId } from "mongodb";
 import { Paginate } from "../../@types/paginate.type";
 import { Teacher } from "../../@types/teacher.type";
 import { ApiError, BaseCustomError } from "../../utils/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
 import { teacherModel } from "../models/teacher.model";
+import { PaginateRepo } from "../@types/repo-type";
 
 export class TeacherRepository {
   constructor() {}
 
-  async CreateTeacher ({
+  async CreateTeacher({
     first_name,
     last_name,
     phone_number,
@@ -25,8 +27,8 @@ export class TeacherRepository {
     certificate,
     class_id,
     video,
-  }:Teacher){
-    try{
+  }: Teacher) {
+    try {
       const newUser = await teacherModel.create({
         first_name,
         last_name,
@@ -46,16 +48,13 @@ export class TeacherRepository {
         class_id,
         video,
       });
-      return  newUser
-    }catch(error: unknown){
-      throw error
+      return newUser;
+    } catch (error: unknown) {
+      throw error;
     }
   }
 
-  async FindAllTeachers(options: Paginate) {
-    const { pageNumber, pageSize } = options as Paginate;
-    const skip = (pageNumber - 1) * pageSize;
-
+  async FindAllTeachers({ pageSize, skip }: PaginateRepo) {
     try {
       const teachers = await teacherModel.find({}).skip(skip).limit(pageSize);
       if (!teachers || teachers.length === 0) {
@@ -70,6 +69,22 @@ export class TeacherRepository {
         "Something went wrong!",
         StatusCode.INTERNAL_SERVER_ERROR
       );
+    }
+  }
+
+  async FindOneTeacher({ _id }: { _id: string }) {
+    try {
+      const teacher = await teacherModel.findById(_id)
+
+      if(!teacher) {
+        throw new BaseCustomError("No teacher match this id!", StatusCode.NOT_FOUND);
+      }
+      return teacher;
+    } catch (error: unknown) {
+     if(error instanceof BaseCustomError){
+      throw error
+     }
+     throw new ApiError("Somthing went wrong!")
     }
   }
 }

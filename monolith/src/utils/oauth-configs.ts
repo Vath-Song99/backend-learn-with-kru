@@ -63,7 +63,7 @@ export class OauthConfig {
       redirect_uri: process.env.FACEBOOK_REDIRECT_URI as string,
       code,
     };
-    const url = "https://graph.facebook.com/v13.0/oauth/access_token";
+    const url = `https://graph.facebook.com/v13.0/oauth/access_token`;
     try {
       return await this.getToken(requestBody, url);
     } catch (error) {
@@ -75,7 +75,6 @@ export class OauthConfig {
     try {
       const userInfoResponse = await axios.get(url, {
         headers: { Authorization: `Bearer ${access_token}` },
-       
       });
       return userInfoResponse;
     } catch (error: unknown) {
@@ -92,7 +91,8 @@ export class OauthConfig {
     }
   }
   async FacebookAccessInfo(access_token: string) {
-    const url = "https://graph.facebook.com/v13.0/me";
+    const fields = "id,name,email,first_name,last_name,picture";
+    const url = `https://graph.facebook.com/v13.0/me?fields=${fields}`;
     try {
       return await this.AccessInfo({ access_token, url });
     } catch (error: unknown) {
@@ -126,7 +126,7 @@ export class OauthConfig {
       const queryString = querystring.stringify(queryParams);
 
       // Construct the full URL with the query string
-      const url = `https://www.facebook.com/v19.0/dialog/oauth?fields=email${queryString}`;
+      const url = `https://www.facebook.com/v19.0/dialog/oauth?${queryString}`;
 
       return url;
     } catch (error: unknown) {

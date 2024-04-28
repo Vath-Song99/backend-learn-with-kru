@@ -1,5 +1,5 @@
 import { NextFunction,Request, Response, Router } from "express";
-import { PATH_AUTH } from "../path-defs";
+import { PATH_AUTH, PATH_TEACHER } from "../path-defs";
 import { AuthController } from "../../controllers/auth.controller";
 import StatusCode from "../../utils/http-status-code";
 import {  zodValidate } from "../../middlewares/user-validate-middleware";
@@ -10,19 +10,35 @@ import {  OauthConfig } from "../../utils/oauth-configs";
 const AuthRoute = Router()
 
 AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: Request, res: Response, _next: NextFunction) =>{
+  const requestBody = req.body;
     try{
         const controller = new AuthController();
-        const requestBody = req.body;
         const respone = await controller.Singup(requestBody);
 
         res.status(StatusCode.OK).json({
             messaage: 'success',
-            users: respone
+            users: respone.newUser,
+            token: respone.jwtToken
         })
     }catch(error: unknown){
     _next(error)
     }
     
+});
+
+AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextFunction) =>{
+  const token = req.query.token as string
+  try{
+    const controller = new AuthController();
+    const respone = await controller.VerifyEmail(token)
+
+    res.status(StatusCode.OK).json({
+      success: true,
+      jwtToken: respone.jwtToken
+    })
+  }catch(error: unknown){
+    _next(error)
+  }
 })
 
 AuthRoute.get(
@@ -67,7 +83,6 @@ AuthRoute.get(
     try {
       const redirectUri = process.env.FACEBOOK_REDIRECT_URI as string;
       const clienId = process.env.FACEBOOK_APP_ID as string;
-      
       const facebookConfig = await OauthConfig.getInstance()
       const authUrl = await facebookConfig.FacebookConfigUrl(clienId, redirectUri);
       res.redirect(authUrl);

@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { ApiError, BaseCustomError } from "./base-custom-error";
 import StatusCode from "./http-status-code";
 import jwt from 'jsonwebtoken';
+import { ObjectId } from "mongodb";
 
 const salt = 10;
 
@@ -13,14 +14,14 @@ export const generatePassword = async (password: string) => {
   }
 };
 
-export const generateSignature = async ({payload}: {payload: string | object}): Promise<string> => {
+export const generateSignature = async ({payload}: {payload: object | string}): Promise<string> => {
 
   try {
     const token = jwt.sign(payload, process.env.SECRET_KEY as string);  
     return  token
-  } catch (error: unknown | string) {
+  } catch (error: unknown) {
     throw new BaseCustomError(
-      error as string,
+      error instanceof Error ? error.message : 'Unknown error occurred',
       StatusCode.NOT_ACCEPTABLE
     );
   }

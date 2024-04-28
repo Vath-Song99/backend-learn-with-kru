@@ -17,6 +17,7 @@ dotenv.config({ path: "configs/.env" });
 const app: Application = express();
 
 //global middleware
+app.use(cors(corsOptions));
 app.use(express.static("public"));
 app.use(express.json());
 app.set("view engine", "ejs");
@@ -33,5 +34,5 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //error handler globale middleware
 app.use(errorHandler);
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 export default app;
