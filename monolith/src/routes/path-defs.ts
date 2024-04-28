@@ -12,6 +12,6 @@ export const PATH_AUTH = {
 
 export const PATH_TEACHER = {
     teacherList: "/teachers",
-    teachersignup: "/teacher-signup",
+    teacherSignup: "/teacher-signup",
     teacherProfile: "/teacher-profile"
 }

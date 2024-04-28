@@ -26,12 +26,14 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
     
 });
 
-AuthRoute.post(PATH_AUTH.login , zodValidate(authLoginSchema) , async(req: Request, res: Response , _next: NextFunction) =>{
+AuthRoute.get(PATH_AUTH.login, async(req: Request, res: Response , _next: NextFunction) =>{
   const requestBody = req.body
   try{
+   
     const controller = new AuthController();
     const user = await controller.Login(requestBody)
 
+    
     res.status(StatusCode.OK).json({
       success: true,
       user: user.existingUser,

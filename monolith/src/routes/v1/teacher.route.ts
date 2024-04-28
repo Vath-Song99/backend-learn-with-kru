@@ -36,17 +36,17 @@ TeacherRoute.get(
 );
 
 TeacherRoute.post(
-  PATH_TEACHER.teachersignup,
+  PATH_TEACHER.teacherSignup,
   zodValidate(teacherSchemas),
   async (req: Request, res: Response, _next: NextFunction) => {
     const requestBody = req.body;
     try {
       const controller = new TeacherController();
-      const newUser = await controller.TeacherSingup(requestBody);
+      const newTeacher = await controller.TeacherSingup(requestBody);
 
       res.status(StatusCode.CREATED).json({
         success: true,
-        teacher: newUser,
+        teacher: newTeacher,
       });
     } catch (error: unknown) {
       _next(error);

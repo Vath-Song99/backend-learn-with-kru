@@ -50,6 +50,7 @@ export class AuthServices {
             StatusCode.BAD_REQUEST
           );
         }
+        this.accountVerificationRepo.DeleteAccountVerifyByAuthId({authId: existingUser._id})
         this.SendVerifyEmailToken({
           authId: existingUser._id,
           email: existingUser.email as string,
@@ -103,12 +104,12 @@ export class AuthServices {
 
       // step 3
       const now = new Date();
-      const inOnSecond = GenerateTimeExpire(now);
+      const inTenMinutes = GenerateTimeExpire(now);
       // step 4
       const accountVerification = new AccountVerificationModel({
         authId: authId,
         emailVerificationToken,
-        expired_at: inOnSecond,
+        expired_at: inTenMinutes,
       });
       const newAccountVerification = await accountVerification.save();
 
@@ -137,14 +138,7 @@ export class AuthServices {
 
       const now = new Date();
       if (now > isTokenExist.expired_at) {
-        const existAuth = await this.AuthRepo.FindUserById({
-          id: isTokenExist.authId,
-        });
-        await this.SendVerifyEmailToken({
-          authId: existAuth?._id as ObjectId,
-          email: existAuth?.email as string,
-        });
-        await this.accountVerificationRepo.DeleteVerificationToken({ token });
+        await this.accountVerificationRepo.DeleteVerificationByToken({ token });
 
         throw new BaseCustomError(
           "Verify Token was expire!",
@@ -166,7 +160,7 @@ export class AuthServices {
       const jwtToken = await generateSignature({
         payload: user._id.toString(),
       });
-      await this.accountVerificationRepo.DeleteVerificationToken({ token });
+      await this.accountVerificationRepo.DeleteVerificationByToken({ token });
 
       return { user, jwtToken };
     } catch (error) {
@@ -212,16 +206,15 @@ export class AuthServices {
     return isToken;
   }
 
-  async DeleteVerifyOld(oldToken: Types.ObjectId) {
-    return await this.accountVerificationRepo.DeleteVerify(oldToken);
-  }
+
 
   async Login(user: Login) {
     // TODO LIST
     //******************* */
     // 1. find existing user
-    // 2. checking for correct password
-    // 3. generate jwt token
+    // 2. checking user verify or not
+    // 3. checking for correct password
+    // 4. generate jwt token
     try {
       const { email , password } = user;
       // step 1
@@ -230,6 +223,10 @@ export class AuthServices {
         throw new BaseCustomError("User not exist", StatusCode.NOT_FOUND);
       }
       // step 2
+      if(existingUser.is_verified === false){
+        throw new BaseCustomError("your email isn't verify",StatusCode.BAD_REQUEST)
+      }
+      // step 3
       const isPwdCorrect = await validatePassword({
         enteredPassword: password,
         savedPassword: existingUser.password as string,
@@ -240,12 +237,15 @@ export class AuthServices {
           StatusCode.BAD_REQUEST
         );    
       }
-      // step 3
+      // step 4
       const jwtToken = await generateSignature({ payload: existingUser._id.toString()});
 
       return { existingUser , jwtToken };
     } catch (error) {
-      throw error;
+      if(error instanceof BaseCustomError){
+        throw error
+      }
+      throw new BaseCustomError("Somthing went wrong!", StatusCode.INTERNAL_SERVER_ERROR)
     }
   }
 
