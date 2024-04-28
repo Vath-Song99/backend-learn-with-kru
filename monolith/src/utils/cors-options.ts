@@ -1,7 +1,7 @@
 
 import cors from 'cors'
 // use cors
-const allowedOrigins: string[] = ["http://localhost:3001"];
+const allowedOrigins: string[] = ["http://localhost:3000"];
 
 export const corsOptions: cors.CorsOptions = {
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {

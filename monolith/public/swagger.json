@@ -7,7 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"AuthControllerType": {
+			"User": {
 				"properties": {
 					"firstname": {
 						"type": "string"
@@ -25,13 +25,12 @@
 				"required": [
 					"firstname",
 					"lastname",
-					"email",
-					"password"
+					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthLogin": {
+			"UserLogin": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -82,7 +81,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AuthControllerType"
+								"$ref": "#/components/schemas/User"
 							}
 						}
 					}
@@ -155,7 +154,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/AuthLogin"
+								"$ref": "#/components/schemas/UserLogin"
 							}
 						}
 					}

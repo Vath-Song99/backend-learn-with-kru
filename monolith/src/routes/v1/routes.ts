@@ -11,18 +11,18 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "AuthControllerType": {
+    "User": {
         "dataType": "refObject",
         "properties": {
             "firstname": {"dataType":"string","required":true},
             "lastname": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
-            "password": {"dataType":"string","required":true},
+            "password": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthLogin": {
+    "UserLogin": {
         "dataType": "refObject",
         "properties": {
             "email": {"dataType":"string","required":true},
@@ -47,7 +47,7 @@ export function RegisterRoutes(app: Router) {
 
             async function AuthController_Singup(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"AuthControllerType"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"User"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -107,7 +107,7 @@ export function RegisterRoutes(app: Router) {
 
             async function AuthController_LoginWithEmail(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    authdata: {"in":"body","name":"authdata","required":true,"ref":"AuthLogin"},
+                    authdata: {"in":"body","name":"authdata","required":true,"ref":"UserLogin"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
