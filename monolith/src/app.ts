@@ -34,5 +34,4 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //error handler globale middleware
 app.use(errorHandler);
-app.use(cors(corsOptions));
 export default app;
