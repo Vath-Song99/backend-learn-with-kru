@@ -10,6 +10,7 @@ import { corsOptions } from "./utils/cors-options";
 import cors from "cors";
 import AuthRoute from "./routes/v1/auth.route";
 import TeacherRoute from "./routes/v1/teacher.route";
+import { RegisterRoutes } from "./routes/v1/routes";
 
 //app
 dotenv.config({ path: "configs/.env" });
@@ -22,7 +23,7 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// RegisterRoutes(app);
+ RegisterRoutes(app);
 const ROUTE = "/api/v1";
 app.use(ROUTE, AuthRoute);
 app.use(ROUTE, TeacherRoute);
@@ -33,4 +34,5 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //error handler globale middleware
 app.use(errorHandler);
+app.use(cors(corsOptions));
 export default app;
