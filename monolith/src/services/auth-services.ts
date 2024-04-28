@@ -16,6 +16,7 @@ import { AuthRepository } from "../databases/repositories/auth.respository";
 import { ObjectId } from "mongodb";
 import { GenerateTimeExpire } from "../utils/date-generate";
 import { TokenResponse } from "../utils/@types/oauth.type";
+import { Login } from "../@types/user.type";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -215,31 +216,34 @@ export class AuthServices {
     return await this.accountVerificationRepo.DeleteVerify(oldToken);
   }
 
-  async Login(authData: { password: string; email: string }) {
+  async Login(user: Login) {
+    // TODO LIST
+    //******************* */
+    // 1. find existing user
+    // 2. checking for correct password
+    // 3. generate jwt token
     try {
-      const user = await this.AuthRepo.FindUserByEmail({
-        email: authData.email,
-      });
-
-      if (!user) {
+      const { email , password } = user;
+      // step 1
+      const existingUser = await this.AuthRepo.FindUserByEmail({email});
+      if (!existingUser) {
         throw new BaseCustomError("User not exist", StatusCode.NOT_FOUND);
       }
-
+      // step 2
       const isPwdCorrect = await validatePassword({
-        enteredPassword: authData.password,
-        savedPassword: user.password as string,
+        enteredPassword: password,
+        savedPassword: existingUser.password as string,
       });
-
       if (!isPwdCorrect) {
         throw new BaseCustomError(
           "Email or Password is incorrect",
           StatusCode.BAD_REQUEST
-        );
+        );    
       }
+      // step 3
+      const jwtToken = await generateSignature({ payload: existingUser._id.toString()});
 
-      const token = await generateSignature({ payload: user._id });
-
-      return { token };
+      return { existingUser , jwtToken };
     } catch (error) {
       throw error;
     }

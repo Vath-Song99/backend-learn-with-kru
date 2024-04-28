@@ -4,7 +4,7 @@ import { authLoginSchema, userValidateSchema } from "../schemas/auth-validate";
 import { AuthServices } from "../services/auth-services";
 import StatusCode from "../utils/http-status-code";
 import { generateSignature } from "../utils/jwt";
-import { User } from "../@types/user.type";
+import { Login, User } from "../@types/user.type";
 import {
   Get,
   Post,
@@ -14,7 +14,6 @@ import {
   Body,
   Query,
 } from "tsoa";
-import { UserLogin } from "./@types/auth-controller-type";
 
 @Route("/api/v1")
 export class AuthController {
@@ -50,14 +49,15 @@ export class AuthController {
   @Post(PATH_AUTH.login)
   @SuccessResponse(StatusCode.OK, "OK")
   @Middlewares(zodValidate(authLoginSchema))
-  public async LoginWithEmail(
-    @Body() authdata: UserLogin
-  ): Promise<{ message: string }> {
+  public async Login(
+    @Body() requestBody: Login
+  ) {
+    const { email, password } = requestBody;
     try {
       const authService = new AuthServices();
-      const { email, password } = authdata;
-      const jwtToken = await authService.Login({ email, password });
-      return { message: "success login" };
+      const user = await authService.Login({email , password})
+
+      return user
     } catch (error) {
       throw error;
     }

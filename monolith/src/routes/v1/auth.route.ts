@@ -3,7 +3,7 @@ import { PATH_AUTH, PATH_TEACHER } from "../path-defs";
 import { AuthController } from "../../controllers/auth.controller";
 import StatusCode from "../../utils/http-status-code";
 import {  zodValidate } from "../../middlewares/user-validate-middleware";
-import { userValidateSchema } from "../../schemas/auth-validate";
+import { authLoginSchema, userValidateSchema } from "../../schemas/auth-validate";
 import {  OauthConfig } from "../../utils/oauth-configs";
 
 // Route
@@ -25,6 +25,22 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
     }
     
 });
+
+AuthRoute.post(PATH_AUTH.login , zodValidate(authLoginSchema) , async(req: Request, res: Response , _next: NextFunction) =>{
+  const requestBody = req.body
+  try{
+    const controller = new AuthController();
+    const user = await controller.Login(requestBody)
+
+    res.status(StatusCode.OK).json({
+      success: true,
+      user: user.existingUser,
+      token: user.jwtToken
+    })
+  }catch(error: unknown){
+    _next(error)
+  }
+})
 
 AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextFunction) =>{
   const token = req.query.token as string
