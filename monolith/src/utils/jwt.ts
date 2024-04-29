@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import { ApiError, BaseCustomError } from "./base-custom-error";
 import StatusCode from "./http-status-code";
 import jwt from 'jsonwebtoken';
-import { ObjectId } from "mongodb";
 
 const salt = 10;
 
