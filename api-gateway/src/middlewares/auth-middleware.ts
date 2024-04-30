@@ -5,15 +5,11 @@ import { logger } from "../utils/logger";
 import { verify } from "jsonwebtoken";
 import { publicKey } from "../server";
 
-async function verifyUser(
-  req: Request,
-  _res: Response,
-  _next: NextFunction
-) {
+async function verifyUser(req: Request, _res: Response, _next: NextFunction) {
   try {
     if (!req.session?.jwt) {
       logger.error(
-        "Token is not available. Gateway Service verifyUser() method error"
+        "Token is not available. Gateway Service verifyUser() method error "
       );
       throw new APIError(
         "Please login to access this resource.",
@@ -26,8 +22,6 @@ async function verifyUser(
   } catch (error) {
     _next(error);
   }
-};
-
-export {
-  verifyUser
 }
+
+export { verifyUser };

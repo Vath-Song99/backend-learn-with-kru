@@ -1,3 +1,3 @@
 export const ROUTE_PATHS ={
-    AUTH_SERVICE: "/v1/auth"
+    AUTH_SERVICE: "/api/v1/auth"
 }

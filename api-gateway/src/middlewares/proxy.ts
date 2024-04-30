@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { createProxyMiddleware, Options } from "http-proxy-middleware";
+import { createProxyMiddleware , Options } from "http-proxy-middleware";
 import { logger } from "../utils/logger";
 import { ClientRequest, IncomingMessage } from "http";
 import getConfig from "../utils/createConfig";
@@ -19,10 +19,12 @@ const config = getConfig();
 // Define the proxy rules and targets
 const proxyConfigs: ProxyConfig = {
   [ROUTE_PATHS.AUTH_SERVICE]: {
-    target: config.authServiceUrl,
+    target: config.authServiceUrl as string,
     changeOrigin: true,
     selfHandleResponse: true,
-    pathRewrite: (path: any, _req: any) => `${ROUTE_PATHS.AUTH_SERVICE}${path}`,
+    pathRewrite: (path, _req ) => {
+      console.log(`${ROUTE_PATHS.AUTH_SERVICE}${path}`)
+      return `${ROUTE_PATHS.AUTH_SERVICE}${path}`},
     on: {
       proxyReq: (proxyReq: ClientRequest, req: IncomingMessage, _res: Response) => {
         logger.info(`Proxied request URL: ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
@@ -40,7 +42,6 @@ const proxyConfigs: ProxyConfig = {
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-
           let responseBody: { message?: string; token?: string, errors?: Array<object> };
 
           try {

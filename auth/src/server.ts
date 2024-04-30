@@ -4,7 +4,8 @@ import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
 import EmailSender from "./utils/email-sender";
 import NodemailerEmailApi from "./utils/nodemailer-email-api";
-import fs from 'fs';
+import fs from 'fs'
+export const privateKey = fs.readFileSync(path.join(__dirname, "../private_key.pem"), 'utf-8')
 
 async function run() {
   try {
@@ -27,7 +28,7 @@ async function run() {
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();
-    await mongodb.connect({ url: config.mongo.url as string });
+    await mongodb.connect({ url: config.mongoUrl as string });
     // Start Server
     const server = app.listen(config.port, () => {
     });
