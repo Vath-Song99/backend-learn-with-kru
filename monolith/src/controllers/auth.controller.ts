@@ -86,4 +86,17 @@ export class AuthController {
       throw error;
     }
   }
+
+  @SuccessResponse(StatusCode.OK, "OK")
+  @Post(PATH_AUTH.resetPassword)
+  async ResetPassword(requestBody:{email: string} ){
+    const {email} = requestBody
+    try{
+      const service = new AuthServices();
+      const user = await service.ResetPassword({email});
+      return user
+    }catch(error: unknown){
+      throw error
+    }
+  }
 }

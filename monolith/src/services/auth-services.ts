@@ -293,4 +293,16 @@ export class AuthServices {
       throw error;
     }
   }
+
+  async ResetPassword({email}:{email: string}){
+    try{
+      const user = await this.AuthRepo.FindUserByEmail({email});
+      if(!user){
+        throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
+      }
+      return user
+    }catch(error: unknown){
+      throw error
+    }
+  }
 }

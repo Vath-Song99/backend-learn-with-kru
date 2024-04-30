@@ -26,7 +26,8 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
     
 });
 
-AuthRoute.get(PATH_AUTH.login, async(req: Request, res: Response , _next: NextFunction) =>{
+
+AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request, res: Response , _next: NextFunction) =>{
   const requestBody = req.body
   try{
    
@@ -34,11 +35,34 @@ AuthRoute.get(PATH_AUTH.login, async(req: Request, res: Response , _next: NextFu
     const user = await controller.Login(requestBody)
 
     
+    res.cookie('authenticated', user.jwtToken, { httpOnly: true });
     res.status(StatusCode.OK).json({
       success: true,
       user: user.existingUser,
       token: user.jwtToken
+    });
+  }catch(error: unknown){
+    _next(error)
+  }
+});
+AuthRoute.get(PATH_AUTH.logout , async (req: Request ,res: Response ,_next: NextFunction) =>{
+  
+  try{
+    
+    res.clearCookie('authenticated');
+    res.status(StatusCode.OK).json({
+      success: true,
+      message: "logout success"
     })
+  }catch(error: unknown){
+    _next(error)
+  }
+});
+
+AuthRoute.post(PATH_AUTH.resetPassword, async (req: Request ,res: Response , _next: NextFunction) =>{
+  const requestBody = req.body
+  try{
+    
   }catch(error: unknown){
     _next(error)
   }

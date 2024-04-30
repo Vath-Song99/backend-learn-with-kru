@@ -5,6 +5,7 @@ import StatusCode from "../../utils/http-status-code";
 import { Paginate } from "../../@types/paginate.type";
 import { zodValidate } from "../../middlewares/user-validate-middleware";
 import { teacherSchemas } from "../../schemas/teacher-validate";
+import { requireAuth } from "../../middlewares/require-auth";
 
 const TeacherRoute = Router();
 
@@ -55,9 +56,11 @@ TeacherRoute.post(
 );
 
 TeacherRoute.get(
-  PATH_TEACHER.teacherProfile,
+  PATH_TEACHER.teacherProfile, requireAuth ,
   async (req: Request, res: Response, _next: NextFunction) => {
     const _id = req.query.id as string;
+    const user = req.user
+    console.log(user)
     try {
       const controller = new TeacherController();
       const teacher = await controller.FindOneTeacher({ _id });
