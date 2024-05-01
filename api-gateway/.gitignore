@@ -1,1 +1,9 @@
+# node_module 
 node_modules/
+
+# configs dotenv file
+configs/.env
+configs/.env.prod
+
+#key to verify the jwt tokn
+public_key.pem

@@ -1,5 +1,5 @@
 export const PATH_AUTH = {
-  baseAuth: "/api/v1",
+  baseAuth: "/v1/auth",
   signUp: "/signup",
   verify: "/verify",
   login: "/login",
@@ -10,12 +10,10 @@ export const PATH_AUTH = {
   googleOAuthCallBack: "/google/callback",
   facebookOAuth: "/facebook",
   facebookOAuthCallBack: "/facebook/callback",
- 
 };
 
-
 export const PATH_TEACHER = {
-    teacherList: "/teachers",
-    teacherSignup: "/teacher-signup",
-    teacherProfile: "/teacher-profile"
-}
+  teacherList: "/teachers",
+  teacherSignup: "/teacher-signup",
+  teacherProfile: "/teacher-profile",
+};
