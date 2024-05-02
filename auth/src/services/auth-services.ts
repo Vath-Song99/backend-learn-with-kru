@@ -302,12 +302,25 @@ export class AuthServices {
   }
 
   async ResetPassword({email}:{email: string}){
+    //***************** */
+    // 1. find exist user
     try{
-      const user = await this.AuthRepo.FindUserByEmail({email});
-      if(!user){
-        throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
+      const existingUser = await this.AuthRepo.FindUserByEmail({email});
+      if(existingUser){
+        if(!existingUser.is_verified){
+          throw new BaseCustomError("Your Email isn't Verify, Please verify your email!",StatusCode.UNAUTHORIZED)
+        }
+        else{
+          if(!existingUser.password){
+            throw new BaseCustomError("Your account is sign up with third-party app",StatusCode.BAD_REQUEST)
+          }
+          this.SendVerifyEmailToken({
+            authId: existingUser._id,
+            email: existingUser.email as string,
+          });
+        }
       }
-      return user
+      throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
     }catch(error: unknown){
       throw error
     }

@@ -3,6 +3,7 @@ import { PATH_AUTH } from "../routes/path-defs";
 import { authLoginSchema, userValidateSchema } from "../schemas/auth-validate";
 import { AuthServices } from "../services/auth-services";
 import StatusCode from "../utils/http-status-code";
+import { generateSignature } from "../utils/jwt";
 import { Login, User } from "../@types/user.type";
 import {
   Get,
@@ -98,5 +99,4 @@ export class AuthController {
       throw error
     }
   }
-
 }

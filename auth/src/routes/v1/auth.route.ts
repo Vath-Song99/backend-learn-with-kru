@@ -43,7 +43,7 @@ AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request
     _next(error)
   }
 });
-AuthRoute.get(PATH_AUTH.logout , async (_req: Request ,res: Response ,_next: NextFunction) =>{
+AuthRoute.post(PATH_AUTH.logout , async (_req: Request ,res: Response ,_next: NextFunction) =>{
   
   try{
     res.status(StatusCode.OK).json({
@@ -54,14 +54,22 @@ AuthRoute.get(PATH_AUTH.logout , async (_req: Request ,res: Response ,_next: Nex
   }
 });
 
-AuthRoute.post(PATH_AUTH.resetPassword, async (_req: Request ,_res: Response , _next: NextFunction) =>{
-  // const requestBody = req.body
+AuthRoute.post(PATH_AUTH.resetPassword, async (req: Request ,res: Response , _next: NextFunction) =>{
+  const requestBody = req.body
   try{
-    
+    const controller = new AuthController();
+    const newUser = await controller.ResetPassword(requestBody)
+
+    res.status(StatusCode.OK).json({
+      message: 'please verify your email',
+      token: newUser
+    })
   }catch(error: unknown){
     _next(error)
   }
 })
+
+AuthRoute
 
 AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextFunction) =>{
   const token = req.query.token as string
