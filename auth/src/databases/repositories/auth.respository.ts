@@ -1,5 +1,5 @@
 import { authModel } from "../models/auth.model";
-import { AuthUserRepo, OauthUserRepo } from "../@types/repo-type";
+import { AuthUserRepo, OauthUserRepo, UserUpdates } from "../@types/repo-type";
 import { ApiError, BaseCustomError } from "../../error/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
 import { ObjectId } from "mongodb";
@@ -72,7 +72,7 @@ export class AuthRepository {
       );
     }
   }
-  async FindUserById({ id }: { id: ObjectId }) {
+  async FindUserById({ id }: { id: string | ObjectId }) {
     try {
       const existingUser = await authModel.findById({ _id: id });
 
@@ -91,6 +91,24 @@ export class AuthRepository {
       return existingUser;
     } catch (error: unknown) {
       throw new ApiError(error as string);
+    }
+  }
+
+  async FindUserByIdAndUpdate ({id , updates }:{
+    id: string | ObjectId,
+    updates: UserUpdates
+  }) {
+    try{
+      const existUser = await this.FindUserById({id})
+      if(!existUser){
+        throw new ApiError("User does't exist!")
+      }
+      const updated = await authModel.findByIdAndUpdate(id , updates ,{
+        new: true
+      })
+      return updated
+    }catch(error: unknown){
+
     }
   }
 }

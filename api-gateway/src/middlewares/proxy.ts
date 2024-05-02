@@ -16,24 +16,26 @@ interface NetworkError extends Error {
 
 const config = getConfig();
 
+// const checkTargetUrl = ()
+
 // Define the proxy rules and targets
 const proxyConfigs: ProxyConfig = {
   [ROUTE_PATHS.AUTH_SERVICE]: {
+    pathRewrite: (path, _req ) => {
+      return `${ROUTE_PATHS.AUTH_SERVICE}${path}`},
     target: config.authServiceUrl as string,
     changeOrigin: true,
     selfHandleResponse: true,
-    pathRewrite: (path, _req ) => {
-      console.log(`${ROUTE_PATHS.AUTH_SERVICE}${path}`)
-      return `${ROUTE_PATHS.AUTH_SERVICE}${path}`},
     on: {
       proxyReq: (proxyReq: ClientRequest, req: IncomingMessage, _res: Response) => {
         logger.info(`Proxied request URL: ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         logger.info(`Headers Sent: ${JSON.stringify(proxyReq.getHeaders())}`);
         const expressReq = req as Request;
-
+ 
         // Extract JWT token from session
         const token = expressReq.session!.jwt;
         proxyReq.setHeader('Authorization', `Bearer ${token}`)
+       
       },
       proxyRes: (proxyRes, req, res) => {
         let originalBody: Buffer[] = [];
@@ -42,29 +44,35 @@ const proxyConfigs: ProxyConfig = {
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-          let responseBody: { message?: string; token?: string, errors?: Array<object> };
-
+          let responseBody: { message?: string; token?: string; redirectUrl?: string; errors?: Array<object> };
+          if (proxyRes.statusCode === 302 && proxyRes.headers.location) {
+            const redirectUrl = proxyRes.headers.location;
+            // Forward the redirect URL to the client
+            return res.redirect(redirectUrl);
+          }
           try {
             responseBody = JSON.parse(bodyString);
-
+            if (responseBody.redirectUrl) {
+              // Include redirect URL in the response sent back to the client
+              return res.json({ redirectUrl: responseBody.redirectUrl });
+            }
             // If Response Error, Not Modified Response
             if (responseBody.errors) {
               return res.status(proxyRes.statusCode!).json(responseBody)
             }
-
+      
             // Store JWT in session
             if (responseBody.token) {
               (req as Request).session!.jwt = responseBody.token;
             }
-
+      
             // Modify response to send only the message to the client
             res.json({ message: responseBody.message });
           } catch (error) {
             return res.status(500).json({ message: "Error parsing response" });
           }
-
         })
-      },
+      },      
       error: (err: NetworkError, _req, res) => {
         logger.error(`Proxy Error: ${err}`)
         switch (err.code) {
@@ -80,6 +88,7 @@ const proxyConfigs: ProxyConfig = {
       }
     },
   },
+  
 };
 
 

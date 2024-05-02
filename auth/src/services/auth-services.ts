@@ -179,11 +179,19 @@ export class AuthServices {
         userInfoResponse.data;
       const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
+        if(!user.googleId){
+           await this.AuthRepo.FindUserByIdAndUpdate({id: user._id ,
+            updates:{
+              googleId: id,
+              is_verified: true
+            }
+           })
+        }
         const jwtToken = await generateSignature({ payload: id });
-        return { newUser: user, jwtToken };
+        return {  jwtToken };
       }
 
-      const newUser = await this.AuthRepo.CreateOauthUser({
+      await this.AuthRepo.CreateOauthUser({
         firstname: given_name,
         lastname: family_name,
         email,
@@ -192,7 +200,7 @@ export class AuthServices {
         profile_picture: picture,
       });
       const jwtToken = await generateSignature({ payload: id });
-      return { newUser, jwtToken };
+      return { jwtToken };
     } catch (error) {
       throw error;
     }
@@ -276,7 +284,7 @@ export class AuthServices {
         return { profile: existingUser, jwtToken };
       }
       //step 4
-      const newUser = await this.AuthRepo.CreateOauthUser({
+        await this.AuthRepo.CreateOauthUser({
         firstname: first_name,
         lastname: last_name,
         email,
@@ -287,7 +295,7 @@ export class AuthServices {
       //step 5
       const jwtToken = await generateSignature({ payload: id });
 
-      return { profile: newUser, jwtToken };
+      return {  jwtToken };
     } catch (error) {
       throw error;
     }

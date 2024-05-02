@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application } from "express";
 import getConfig from "./utils/createConfig";
 import compression from "compression";
 import cookieSession from "cookie-session";
@@ -6,11 +6,11 @@ import hpp from "hpp";
 import helmet from "helmet";
 import cors from "cors";
 import { applyRateLimit } from "./middlewares/rate-limit";
-import { StatusCode } from "./utils/consts";
-import { logger } from "./utils/logger";
+// import { StatusCode } from "./utils/consts";
+// import { logger } from "./utils/logger";
 import applyProxy from "./middlewares/proxy";
-import { verifyUser } from "./middlewares/auth-middleware";
-import unless from "./middlewares/unless-route";
+// import { verifyUser } from "./middlewares/auth-middleware";
+// import unless from "./middlewares/unless-route";
 import { errorHandler } from "./middlewares/error-handler";
 const app: Application = express();
 
@@ -61,7 +61,7 @@ app.disable("x-powered-by");
 // ===================
 // JWT Middleware
 // ===================
-app.use(unless("/v1/auth", verifyUser));
+// app.use(unless("/v1/auth", verifyUser));
 -
 // ===================
 // Proxy Routes
@@ -71,13 +71,13 @@ applyProxy(app);
 // ====================
 // Global Error Handler
 // ====================
-app.use("*", (req: Request, res: Response, _next: NextFunction) => {
-  const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-  logger.error(`${fullUrl} endpoint does not exist`);
-  res
-    .status(StatusCode.NotFound)
-    .json({ message: "The endpoint called does not exist." });
-});
+// app.use("*", (req: Request, res: Response, _next: NextFunction) => {
+//   const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+//   logger.error(`${fullUrl} endpoint does not exist`);
+//   res
+//     .status(StatusCode.NotFound)
+//     .json({ message: "The endpoint called does not exist." });
+// });
 
 app.use(errorHandler);
 

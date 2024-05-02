@@ -7,7 +7,6 @@ import path from "path";
 import cors from "cors";
 import dotenv from 'dotenv'
 import AuthRoute from "./routes/v1/auth.route";
-import cookieParser from "cookie-parser";
 import getConfig from "./utils/config";
 import loggerMiddleware from "./middlewares/logger-handler";
 
@@ -26,15 +25,14 @@ app.use(
     })
   );
 app.use(express.static("public"));
-app.use(cookieParser());
 app.use(express.json({limit: "10mb"}));
 app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(loggerMiddleware);
 
-const ROUTE = "/v1/auth";
-app.use(ROUTE, AuthRoute);
+const ROUTE_BASE = "/v1/auth";
+app.use(ROUTE_BASE, AuthRoute);
 // handle swaggerUi
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

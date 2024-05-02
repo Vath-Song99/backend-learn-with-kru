@@ -16,7 +16,7 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
         const respone = await controller.Singup(requestBody);
 
         res.status(StatusCode.OK).json({
-            messaage: 'success',
+            message: 'success',
             users: respone.newUser,
             token: respone.jwtToken
         })
@@ -34,10 +34,8 @@ AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request
     const controller = new AuthController();
     const user = await controller.Login(requestBody)
 
-    
-    res.cookie('authenticated', user.jwtToken, { httpOnly: true });
-    res.status(StatusCode.OK).json({
-      success: true,
+      res.status(StatusCode.OK).json({
+      message: 'success',
       user: user.existingUser,
       token: user.jwtToken
     });
@@ -48,11 +46,8 @@ AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request
 AuthRoute.get(PATH_AUTH.logout , async (_req: Request ,res: Response ,_next: NextFunction) =>{
   
   try{
-    
-    res.clearCookie('authenticated');
     res.status(StatusCode.OK).json({
-      success: true,
-      message: "logout success"
+      message: 'success',
     })
   }catch(error: unknown){
     _next(error)
@@ -75,7 +70,7 @@ AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextF
     const respone = await controller.VerifyEmail(token)
 
     res.status(StatusCode.OK).json({
-      success: true,
+      message: 'success',
       jwtToken: respone.jwtToken
     })
   }catch(error: unknown){
@@ -89,7 +84,6 @@ AuthRoute.get(
       const redirectUri = process.env.GOOGLE_REDIRECT_URI as string;
       const clienId = process.env.GOOGLE_CLIENT_ID as string;
       try {
-       
         const googleConfig = await OauthConfig.getInstance()
         const authUrl = await googleConfig.GoogleConfigUrl(clienId, redirectUri);
         res.redirect(authUrl);
@@ -111,8 +105,7 @@ AuthRoute.get(
           const userInfoResponse = await controller.GoogleOAuth(queryCode);
           
           res.status(StatusCode.OK).json({
-            success: true,
-            user: userInfoResponse.newUser,
+            message: 'success',
             token: userInfoResponse.jwtToken,
           });
         } catch (error: unknown) {
@@ -141,8 +134,7 @@ AuthRoute.get(
       const userInfoResponse = await controller.FacebookOAuth(queryCode);
 
       res.status(StatusCode.OK).json({
-        success: true,
-        user: userInfoResponse.profile,
+        message: 'success',
         token: userInfoResponse.jwtToken,
       });
     }catch(error: unknown){

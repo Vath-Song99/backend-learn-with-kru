@@ -2,14 +2,12 @@
   "dependencies": {
     "@tsoa/runtime": "^6.2.0",
     "@types/axios": "^0.14.0",
-    "@types/cookie-parser": "^1.4.7",
     "@types/nodemailer": "^6.4.14",
     "@types/on-headers": "^1.0.3",
     "@types/winston": "^2.4.4",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -50,7 +48,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "nodemon src/server.ts",
+    "start:dev": "nodemon src/server.ts",
     "gen:spec": "tsoa spec ",
     "gen:routes": "tsoa routes",
     "gen:all": "npm run gen:spec && npm run gen:routes"

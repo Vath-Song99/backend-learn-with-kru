@@ -14,4 +14,12 @@ export interface PaginateRepo {
     pageSize: number;
     skip: number;
 }
+
+export interface UserUpdates{
+    firstname?: string;
+    lastname?: string;
+    password?: string;
+    googleId?: string;
+    is_verified?: boolean;
+}
   
