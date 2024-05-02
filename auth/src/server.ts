@@ -4,8 +4,7 @@ import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
 import EmailSender from "./utils/email-sender";
 import NodemailerEmailApi from "./utils/nodemailer-email-api";
-import fs from 'fs'
-export const privateKey = fs.readFileSync(path.join(__dirname, "../private_key.pem"), 'utf-8')
+
 
 async function run() {
   try {

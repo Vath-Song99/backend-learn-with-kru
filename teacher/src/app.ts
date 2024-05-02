@@ -24,7 +24,7 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-const ROUTE = "/api/v1";
+const ROUTE = "/v1/teachers";
 app.use(ROUTE, TeacherRoute);
 // handle swaggerUi
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

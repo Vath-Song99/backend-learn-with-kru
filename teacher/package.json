@@ -44,7 +44,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "nodemon src/server.ts",
+    "start:dev": "nodemon src/server.ts",
     "gen:spec": "tsoa spec ",
     "gen:routes": "tsoa routes",
     "gen:all": "npm run gen:spec && npm run gen:routes"
