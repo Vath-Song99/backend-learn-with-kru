@@ -4,6 +4,8 @@
     "@types/axios": "^0.14.0",
     "@types/cookie-parser": "^1.4.7",
     "@types/nodemailer": "^6.4.14",
+    "@types/on-headers": "^1.0.3",
+    "@types/winston": "^2.4.4",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",
@@ -16,7 +18,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "nodemailer": "^6.9.13",
+    "on-headers": "^1.0.2",
     "swagger-ui-express": "^5.0.0",
+    "winston": "^3.13.0",
     "zod": "^3.22.4"
   },
   "name": "learnwithkru",
@@ -44,7 +48,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "nodemon src/server.ts",
+    "start:dev": "nodemon src/server.ts",
     "gen:spec": "tsoa spec ",
     "gen:routes": "tsoa routes",
     "gen:all": "npm run gen:spec && npm run gen:routes"

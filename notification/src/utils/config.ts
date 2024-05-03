@@ -1,5 +1,6 @@
-import dotenv from "dotenv";
-
+import path from 'path'
+import { ApiError } from "../error/base-custom-error";
+import dotenv from 'dotenv'
 function createConfig(configPath: string) {
   dotenv.config({ path: configPath });
 
@@ -8,17 +9,27 @@ function createConfig(configPath: string) {
   const missingConfig = requiredConfig.filter((key) => !process.env[key]);
 
   if (missingConfig.length > 0) {
-   // errrr
+    throw new ApiError(
+      `Missing required environment variables: ${missingConfig.join(", ")}`
+    );
   }
 
   // Return configuration object
   return {
     env: process.env.NODE_ENV,
     port: process.env.PORT,
-    mongo: {
-      url: process.env.MONGODB_URL,
-    },
+    mongoUrl: process.env.MONGODB_URL,
     logLevel: process.env.LOG_LEVEL,
+    apiGateway: process.env.API_GATEWAY,
   };
 }
-export default createConfig;
+
+const getConfig = (currentEnv: string = 'development') => {
+  const configPath =
+    currentEnv === "development"
+      ? path.join(__dirname, `../../configs/.env`)
+      : path.join(__dirname, `../../configs/.env.${currentEnv}`);
+  return createConfig(configPath);
+};
+
+export default getConfig;

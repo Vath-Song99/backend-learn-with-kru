@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import StatusCode from "../utils/http-status-code";
-import { ApiError, BaseCustomError } from "../utils/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import jwt from "jsonwebtoken";
 import { DecodedUser } from "../@types/express-extend.type";
 
@@ -8,7 +8,7 @@ import { DecodedUser } from "../@types/express-extend.type";
 
 export const requireAuth = async (
   req: Request,
-  res: Response,
+  _res: Response,
   _next: NextFunction
 ) => {
 

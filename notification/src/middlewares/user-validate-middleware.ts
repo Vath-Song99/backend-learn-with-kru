@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { ApiError, BaseCustomError } from "../utils/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "../utils/http-status-code";
 import { Schema, ZodError } from "zod";
 
 export const zodValidate = (schema: Schema) => {
-  return async (req: Request, res: Response, _next: NextFunction) => {
+  return async (req: Request, _res: Response, _next: NextFunction) => {
     try {
       schema.parse(req.body);
       _next();

@@ -11,10 +11,3 @@ export const PATH_AUTH = {
   facebookOAuthCallBack: "/auth/facebook/callback",
  
 };
-
-
-export const PATH_TEACHER = {
-    teacherList: "/teachers",
-    teacherSignup: "/teacher-signup",
-    teacherProfile: "/teacher-profile"
-}
