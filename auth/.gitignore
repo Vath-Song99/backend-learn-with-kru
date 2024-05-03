@@ -2,9 +2,9 @@
 node_modules/
 
 
-configs/.env/
+configs/.env
 
-configs/.env.prod/
+configs/.env.prod
 
 
 private_key.pem
