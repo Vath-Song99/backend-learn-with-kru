@@ -27,7 +27,7 @@ TeacherRoute.get(
       const teachers = await controller.TeacherList(options);
 
       res.status(StatusCode.OK).json({
-        success: true,
+        message: 'success',
         teachers: teachers,
       });
     } catch (error: unknown) {
@@ -46,7 +46,7 @@ TeacherRoute.post(
       const newTeacher = await controller.TeacherSingup(requestBody);
 
       res.status(StatusCode.CREATED).json({
-        success: true,
+        message: 'success',
         teacher: newTeacher,
       });
     } catch (error: unknown) {
@@ -66,7 +66,7 @@ TeacherRoute.get(
       const teacher = await controller.FindOneTeacher({ _id });
 
       res.status(StatusCode.OK).json({
-        success: true,
+        message: 'success',
         teacher: teacher,
       });
     } catch (error: unknown) {

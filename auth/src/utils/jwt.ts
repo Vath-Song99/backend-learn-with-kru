@@ -21,11 +21,11 @@ export const generatePassword = async (password: string) => {
   }
 };
 
-export const generateSignature = async ({payload}: {payload: object | string}): Promise<string> => {
+export const generateSignature = async ({payload}: {payload: string}): Promise<string> => {
 
   try {
-    return await jwt.sign(payload, privateKey, {
-      expiresIn: parseInt(getConfig().jwtExpiresIn!),
+    return await jwt.sign({payload: payload}, privateKey, {
+      expiresIn: getConfig().jwtExpiresIn!,
       algorithm: 'RS256'
     });
   } catch (error: unknown) {

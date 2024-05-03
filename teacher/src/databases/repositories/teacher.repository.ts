@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-import { Paginate } from "../../@types/paginate.type";
 import { Teacher } from "../../@types/teacher.type";
 import { ApiError, BaseCustomError } from "../../utils/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
@@ -62,7 +60,7 @@ export class TeacherRepository {
       }
       return teachers;
     } catch (error: unknown) {
-      if (error instanceof ApiError) {
+      if (error instanceof BaseCustomError) {
         throw error;
       }
       throw new BaseCustomError(

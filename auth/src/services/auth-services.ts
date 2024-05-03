@@ -15,7 +15,7 @@ import { ObjectId } from "mongodb";
 import { GenerateTimeExpire } from "../utils/date-generate";
 import { TokenResponse } from "../utils/@types/oauth.type";
 import { Login } from "../@types/user.type";
-import { BaseCustomError } from "../error/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -76,7 +76,9 @@ export class AuthServices {
       const jwtToken = await generateSignature({
         payload: newUser._id.toString(),
       });
-
+      if(!jwtToken){
+        throw new ApiError("Unable to generate jwt token!")
+      }
       return { newUser, jwtToken };
     } catch (error: unknown) {
       throw error;

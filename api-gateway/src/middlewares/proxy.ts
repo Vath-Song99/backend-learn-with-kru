@@ -105,29 +105,23 @@ const proxyConfigs: ProxyConfig = {
         proxyReq.setHeader('Authorization', `Bearer ${token}`)
        
       },
-      proxyRes: (proxyRes, req, res) => {
+      proxyRes: (proxyRes, _req, res) => {
         let originalBody: Buffer[] = [];
         proxyRes.on('data', function (chunk: Buffer) {
           originalBody.push(chunk)
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-          let responseBody: { message?: string; token?: string; redirectUrl?: string; errors?: Array<object> };
+          let responseBody: { message?: string; token?: string; teachers: Array<object>; errors?: Array<object> };
           try {
             responseBody = JSON.parse(bodyString);
-
             // If Response Error, Not Modified Response
             if (responseBody.errors) {
               return res.status(proxyRes.statusCode!).json(responseBody)
             }
       
-            // Store JWT in session
-            if (responseBody.token) {
-              (req as Request).session!.jwt = responseBody.token;
-            }
-      
             // Modify response to send only the message to the client
-            res.json({ message: responseBody.message });
+            res.json({ message: responseBody.message , teachers: responseBody.teachers });
           } catch (error) {
             return res.status(500).json({ message: "Error parsing response" });
           }

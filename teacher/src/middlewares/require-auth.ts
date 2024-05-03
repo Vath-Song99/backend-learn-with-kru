@@ -8,7 +8,7 @@ import { DecodedUser } from "../@types/express-extend.type";
 
 export const requireAuth = async (
   req: Request,
-  res: Response,
+  _res: Response,
   _next: NextFunction
 ) => {
 

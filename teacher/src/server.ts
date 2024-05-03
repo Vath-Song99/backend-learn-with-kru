@@ -2,10 +2,6 @@ import path from "path";
 import app from "./app";
 import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
-import EmailSender from "./utils/email-sender";
-import NodemailerEmailApi from "./utils/nodemailer-email-api";
-import fs from 'fs';
-
 async function run() {
   try {
     const currentEnv = process.env.NODE_ENV || "development";
@@ -20,14 +16,10 @@ async function run() {
     );
     const config = createConfig(configPath);
 
-  // Activate Email Sender with EmailAPI [NodeMailer]
-  const emailSender = EmailSender.getInstance();
-  emailSender.activate();
-  emailSender.setEmailApi(new NodemailerEmailApi());
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();
-    await mongodb.connect({ url: config.mongo.url as string });
+    await mongodb.connect({ url: config.mongoUrl as string });
     // Start Server
     const server = app.listen(config.port, () => {
     });

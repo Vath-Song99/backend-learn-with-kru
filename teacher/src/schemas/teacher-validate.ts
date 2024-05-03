@@ -16,8 +16,8 @@ export const teacherSchemas = z.object({
   date_available: z.object({
     day: z.string(),
     time: z.object({
-      start: z.date(),
-      end: z.date(),
+      start: z.string(),
+      end: z.string(),
     }),
   }),
   price: z.number(),
