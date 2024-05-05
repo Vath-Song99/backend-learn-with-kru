@@ -6,9 +6,11 @@ import * as swaggerDocument from "../public/swagger.json";
 
 import path from "path";
 import cors from "cors";
-import TeacherRoute from "./routes/v1/teacher.route";
 import getConfig from "./utils/config";
 import loggerMiddleware from "./middlewares/logger-handler";
+import { PATH_STUDENT } from "./routes/path-defs";
+import Route from "./routes/v1/student.route";
+import { extractTokenMiddleware } from "./middlewares/extract-token";
 
 //app
 const app: Application = express();
@@ -29,9 +31,9 @@ app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(loggerMiddleware);
+app.use(extractTokenMiddleware);
 
-const ROUTE = "/v1/teachers";
-app.use(ROUTE, TeacherRoute);
+app.use(PATH_STUDENT.BASE, Route)
 // handle swaggerUi
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
