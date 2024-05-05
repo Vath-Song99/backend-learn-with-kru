@@ -15,7 +15,7 @@ import { ObjectId } from "mongodb";
 import { GenerateTimeExpire } from "../utils/date-generate";
 import { TokenResponse } from "../utils/@types/oauth.type";
 import { Login } from "../@types/user.type";
-import { BaseCustomError } from "../error/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -76,7 +76,9 @@ export class AuthServices {
       const jwtToken = await generateSignature({
         payload: newUser._id.toString(),
       });
-
+      if(!jwtToken){
+        throw new ApiError("Unable to generate jwt token!")
+      }
       return { newUser, jwtToken };
     } catch (error: unknown) {
       throw error;
@@ -179,11 +181,19 @@ export class AuthServices {
         userInfoResponse.data;
       const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
+        if(!user.googleId){
+           await this.AuthRepo.FindUserByIdAndUpdate({id: user._id ,
+            updates:{
+              googleId: id,
+              is_verified: true
+            }
+           })
+        }
         const jwtToken = await generateSignature({ payload: id });
-        return { newUser: user, jwtToken };
+        return {  jwtToken };
       }
 
-      const newUser = await this.AuthRepo.CreateOauthUser({
+      await this.AuthRepo.CreateOauthUser({
         firstname: given_name,
         lastname: family_name,
         email,
@@ -192,7 +202,7 @@ export class AuthServices {
         profile_picture: picture,
       });
       const jwtToken = await generateSignature({ payload: id });
-      return { newUser, jwtToken };
+      return { jwtToken };
     } catch (error) {
       throw error;
     }
@@ -276,7 +286,7 @@ export class AuthServices {
         return { profile: existingUser, jwtToken };
       }
       //step 4
-      const newUser = await this.AuthRepo.CreateOauthUser({
+        await this.AuthRepo.CreateOauthUser({
         firstname: first_name,
         lastname: last_name,
         email,
@@ -287,19 +297,32 @@ export class AuthServices {
       //step 5
       const jwtToken = await generateSignature({ payload: id });
 
-      return { profile: newUser, jwtToken };
+      return {  jwtToken };
     } catch (error) {
       throw error;
     }
   }
 
   async ResetPassword({email}:{email: string}){
+    //***************** */
+    // 1. find exist user
     try{
-      const user = await this.AuthRepo.FindUserByEmail({email});
-      if(!user){
-        throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
+      const existingUser = await this.AuthRepo.FindUserByEmail({email});
+      if(existingUser){
+        if(!existingUser.is_verified){
+          throw new BaseCustomError("Your Email isn't Verify, Please verify your email!",StatusCode.UNAUTHORIZED)
+        }
+        else{
+          if(!existingUser.password){
+            throw new BaseCustomError("Your account is sign up with third-party app",StatusCode.BAD_REQUEST)
+          }
+          this.SendVerifyEmailToken({
+            authId: existingUser._id,
+            email: existingUser.email as string,
+          });
+        }
       }
-      return user
+      throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
     }catch(error: unknown){
       throw error
     }

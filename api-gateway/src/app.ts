@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application, NextFunction, Request , Response } from "express";
 import getConfig from "./utils/createConfig";
 import compression from "compression";
 import cookieSession from "cookie-session";
@@ -6,12 +6,16 @@ import hpp from "hpp";
 import helmet from "helmet";
 import cors from "cors";
 import { applyRateLimit } from "./middlewares/rate-limit";
+// import { StatusCode } from "./utils/consts";
+// import { logger } from "./utils/logger";
+import applyProxy from "./middlewares/proxy";
+// import { verifyUser } from "./middlewares/auth-middleware";
+// import unless from "./middlewares/unless-route";
+import { errorHandler } from "./middlewares/error-handler";
 import { StatusCode } from "./utils/consts";
 import { logger } from "./utils/logger";
-import applyProxy from "./middlewares/proxy";
-import { verifyUser } from "./middlewares/auth-middleware";
 import unless from "./middlewares/unless-route";
-import { errorHandler } from "./middlewares/error-handler";
+import { verifyUser } from "./middlewares/auth-middleware";
 const app: Application = express();
 
 const config = getConfig();

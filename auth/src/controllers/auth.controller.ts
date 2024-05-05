@@ -98,4 +98,5 @@ export class AuthController {
       throw error
     }
   }
+
 }

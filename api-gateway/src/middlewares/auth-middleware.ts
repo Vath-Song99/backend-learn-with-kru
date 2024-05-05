@@ -16,7 +16,6 @@ async function verifyUser(req: Request, _res: Response, _next: NextFunction) {
         StatusCode.Unauthorized
       );
     }
-
     await verify(req.session!.jwt, publicKey, { algorithms: ["RS256"] });
     _next();
   } catch (error) {

@@ -2,9 +2,17 @@ import bcrypt from "bcrypt";
 import StatusCode from "./http-status-code";
 import jwt from 'jsonwebtoken';
 import { ApiError, BaseCustomError } from "../error/base-custom-error";
+import getConfig from "./config";
+import path from "path";
+import fs from 'fs'
 
 const salt = 10;
 
+const privateKeyPath = path.join(__dirname, "../../private_key.pem");
+// Read the private key from the file
+const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+
+  
 export const generatePassword = async (password: string) => {
   try {
     return await bcrypt.hash(password, salt);
@@ -13,11 +21,13 @@ export const generatePassword = async (password: string) => {
   }
 };
 
-export const generateSignature = async ({payload}: {payload: object | string}): Promise<string> => {
+export const generateSignature = async ({payload}: {payload: string}): Promise<string> => {
 
   try {
-    const token = jwt.sign(payload, process.env.SECRET_KEY as string);  
-    return  token
+    return await jwt.sign({payload: payload}, privateKey, {
+      expiresIn: getConfig().jwtExpiresIn!,
+      algorithm: 'RS256'
+    });
   } catch (error: unknown) {
     throw new BaseCustomError(
       error instanceof Error ? error.message : 'Unknown error occurred',
@@ -25,7 +35,6 @@ export const generateSignature = async ({payload}: {payload: object | string}): 
     );
   }
 };
-
 
 export const validatePassword = async ({
   enteredPassword,
