@@ -8,7 +8,7 @@ export const teacherSchemas = z.object({
     .length(8)
     .regex(/^\+?(?:855|0)\d{8}$/),
   subject: z.string(),
-  is_degree: z.boolean(),
+  provice: z.string(),
   university: z.string().min(2).max(50),
   year_experience: z.number(),
   type_degree: z.string(),

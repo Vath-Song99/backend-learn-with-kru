@@ -22,7 +22,7 @@ AuthRoute.post(
       const respone = await controller.Singup(requestBody);
 
       res.status(StatusCode.OK).json({
-        message: "success",
+        message: "please verify your Email!",
         users: respone.newUser,
         token: respone.jwtToken,
       });
@@ -42,7 +42,7 @@ AuthRoute.get(
       const user = await controller.Login(requestBody);
 
       res.status(StatusCode.OK).json({
-        message: "success",
+        message: "Login Success",
         user: user.existingUser,
         token: user.jwtToken,
       });
@@ -82,6 +82,8 @@ AuthRoute.post(
   }
 );
 
+AuthRoute;
+
 AuthRoute.get(
   PATH_AUTH.verify,
   async (req: Request, res: Response, _next: NextFunction) => {
@@ -91,7 +93,7 @@ AuthRoute.get(
       const respone = await controller.VerifyEmail(token);
 
       res.status(StatusCode.OK).json({
-        message: "success",
+        message: "Sign up success",
         jwtToken: respone.jwtToken,
       });
     } catch (error: unknown) {

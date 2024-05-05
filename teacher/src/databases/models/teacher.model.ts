@@ -4,27 +4,33 @@ import { Teacher } from "../../@types/teacher.type";
 const teacherSchemas = new mongoose.Schema({
   first_name: {
     type: String,
-    min: 3,
+    min: 2,
     max: 25,
     require: true,
   },
   last_name: {
     type: String,
-    min: 3,
+    min: 2,
     max: 25,
-    require: true,
-  },
-  phone_number: {
-    type: String,
     require: true,
   },
   subject: {
     type: String,
     require: true,
   },
-  is_degree: {
+  phone_number: {
+    type: String,
     require: true,
-    type: Boolean,
+  },
+  province:{
+    type: String,
+    require: true
+  },
+  university:{
+    type: String,
+    min: 50,
+    max: 70,
+    require: true
   },
   year_experience: {
     require: true,
@@ -34,12 +40,11 @@ const teacherSchemas = new mongoose.Schema({
     require: true,
     type: String,
   },
-  specialization: {
-    require: true,
-    type: String,
-  },
   bio: {
     type: String,
+    min: 50,
+    max: 70,
+    require: true
   },
   teacher_experience: {
     require: true,
@@ -53,6 +58,18 @@ const teacherSchemas = new mongoose.Schema({
     require: true,
     type: Object,
   },
+  price: {
+    type: Number,
+    require: true
+  },
+  video: {
+    type: String,
+    require: true
+  },
+  Degree: {
+    type: String,
+    require: true
+  }
 });
 
 export const teacherModel = mongoose.model<Teacher>("teachers", teacherSchemas);
