@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 import AuthRoute from "./routes/v1/auth.route";
 import getConfig from "./utils/config";
 import loggerMiddleware from "./middlewares/logger-handler";
+import CrudRoute from "./routes/v1/crud.route";
 
 //app
 dotenv.config({ path: "configs/.env" });
@@ -33,6 +34,7 @@ app.use(loggerMiddleware);
 
 const ROUTE_BASE = "/v1/auth";
 app.use(ROUTE_BASE, AuthRoute);
+app.use(ROUTE_BASE, CrudRoute)
 // handle swaggerUi
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

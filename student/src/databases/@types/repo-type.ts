@@ -1,17 +1,9 @@
-import { User } from "../../@types/user.type";
+import { Student } from "../../@types/student.type";
 
-export interface AuthUserRepo extends User{
-   
-}
-export interface OauthUserRepo extends User{
-    googleId?: string;
-    facebookId?: string;
-    verified_email: boolean;
-    profile_picture?: string
-}
 
-export interface PaginateRepo {
-    pageSize: number;
-    skip: number;
+export interface StudentRepo extends Student{
+    authId: string;
+    firstname: string;
+    lastname: string;
+    email: string;
 }
-  

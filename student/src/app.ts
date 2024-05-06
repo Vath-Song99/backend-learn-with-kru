@@ -10,14 +10,25 @@ import getConfig from "./utils/config";
 import loggerMiddleware from "./middlewares/logger-handler";
 import { PATH_STUDENT } from "./routes/path-defs";
 import Route from "./routes/v1/student.route";
-import { extractTokenMiddleware } from "./middlewares/extract-token";
+import cookieSession from "cookie-session";
 
 //app
 const app: Application = express();
-
+const config = getConfig()
 //global middleware
 //global middleware
 app.set("trust proxy", 1);
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [`${config.cookieSecretKeyOne}`, `${config.cookieSecretKeyTwo}`],
+    maxAge: 24 * 7 * 3600000,
+    secure: config.env !== "development", // update with value from config
+    ...(config.env !== "development" && {
+      sameSite: "none",
+    }),
+  })
+);
 app.use(
     cors({
       origin: getConfig().apiGateway,
@@ -31,7 +42,8 @@ app.use(express.urlencoded({ extended: true, limit: "200mb" }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(loggerMiddleware);
-app.use(extractTokenMiddleware);
+
+
 
 app.use(PATH_STUDENT.BASE, Route)
 // handle swaggerUi

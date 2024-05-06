@@ -14,8 +14,6 @@ export const PATH_AUTH = {
 };
 
 
-export const PATH_TEACHER = {
-    teacherList: "/teachers",
-    teacherSignup: "/teacher-signup",
-    teacherProfile: "/teacher-profile"
+export const PATH_CRUD = {
+  getUser: "/user/:authId"
 }

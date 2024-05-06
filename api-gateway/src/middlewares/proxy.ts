@@ -35,7 +35,6 @@ const proxyConfigs: ProxyConfig = {
         // Extract JWT token from session
         const token = expressReq.session!.jwt;
         proxyReq.setHeader('Authorization', `Bearer ${token}`)
-       
       },
       proxyRes: (proxyRes, req, res) => {
         let originalBody: Buffer[] = [];
@@ -44,7 +43,7 @@ const proxyConfigs: ProxyConfig = {
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-          let responseBody: { message?: string; token?: string; redirectUrl?: string; errors?: Array<object> };
+          let responseBody: { message?: string , token?: string, redirectUrl?: string, data?: Array<object> , errors?: Array<object> };
           if (proxyRes.statusCode === 302 && proxyRes.headers.location) {
             const redirectUrl = proxyRes.headers.location;
             // Forward the redirect URL to the client
@@ -52,21 +51,21 @@ const proxyConfigs: ProxyConfig = {
           }
           try {
             responseBody = JSON.parse(bodyString);
-         
+            
             // If Response Error, Not Modified Response
             if (responseBody.errors) {
               return res.status(proxyRes.statusCode!).json(responseBody)
             }
-      
+            
             // Store JWT in session
             if (responseBody.token) {
               (req as Request).session!.jwt = responseBody.token;
             }
       
             // Modify response to send only the message to the client
-            res.json({ message: responseBody.message });
+            res.json({ message: responseBody.message , data: responseBody.data });
           } catch (error) {
-            return res.status(500).json({ message: "Error parsing response" });
+            return res.status(500).json({ message: "Error parsing response",  });
           }
         })
       },      
@@ -150,7 +149,7 @@ const proxyConfigs: ProxyConfig = {
         logger.info(`Proxied request URL: ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
         logger.info(`Headers Sent: ${JSON.stringify(proxyReq.getHeaders())}`);
         const expressReq = req as Request;
- 
+        
         // Extract JWT token from session
         const token = expressReq.session!.jwt;
         proxyReq.setHeader('Authorization', `Bearer ${token}`)
@@ -173,7 +172,7 @@ const proxyConfigs: ProxyConfig = {
             // Modify response to send only the message to the client
             res.json({ message: responseBody.message , student: responseBody.student });
           } catch (error) {
-            return res.status(500).json({ message: "Error parsing response" });
+            return res.status(500).json({ message: "Error parsing response" ,  });
           }
         })
       },      

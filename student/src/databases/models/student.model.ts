@@ -1,6 +1,23 @@
 import mongoose from "mongoose";
 
 const studentSchemas = new mongoose.Schema({
+  authId: {
+    type: String
+  },
+  firstname:{
+    type: String,
+    min: 2,
+    max: 25
+  },
+  lastname: {
+    type: String,
+    min: 2,
+    max: 25
+  },
+  email: {
+    type: String,
+    min: 2,
+  },
   school_name: {
     type: String,
     min: 2,
