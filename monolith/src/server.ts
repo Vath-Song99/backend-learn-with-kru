@@ -4,7 +4,7 @@ import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
 import EmailSender from "./utils/email-sender";
 import NodemailerEmailApi from "./utils/nodemailer-email-api";
-
+import fs from 'fs';
 
 async function run() {
   try {

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import AccountVerificationModel from "../models/account-verification.model";
 
 export class AccountVerificationRepository {
@@ -33,10 +33,10 @@ export class AccountVerificationRepository {
       throw error;
     }
   }
-  async DeleteVerify(oldToken: Types.ObjectId) {
-    return await AccountVerificationModel.deleteOne({ _id: oldToken });
+  async DeleteAccountVerifyByAuthId({authId}: {authId: Types.ObjectId}) {
+    return await AccountVerificationModel.deleteOne({ authId });
   }
-  async DeleteVerificationToken({ token }: { token: string }) {
+  async DeleteVerificationByToken({ token }: { token: string }) {
     try {
       await AccountVerificationModel.deleteOne({
         emailVerificationToken: token,

@@ -20,6 +20,7 @@ const app: Application = express();
 //global middleware
 app.use(cors(corsOptions));
 app.use(express.static("public"));
+app.use(cookieParser());
 app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -33,5 +34,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //error handler globale middleware
 app.use(errorHandler);
-app.use(cors(corsOptions));
 export default app;
+function cookieParser(): any {
+    throw new Error("Function not implemented.");
+}
+

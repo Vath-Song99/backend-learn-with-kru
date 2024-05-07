@@ -1,0 +1,12 @@
+
+node_modules/
+
+
+configs/.env
+
+configs/.env.prod
+
+
+private_key.pem
+
+
