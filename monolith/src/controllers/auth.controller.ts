@@ -56,7 +56,7 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const { email, password } = authdata;
-      const jwtToken = await authService.Login({ email, password });
+       const jwtToken = await authService.Login({ email, password });
       return { message: "success login" };
     } catch (error) {
       throw error;
