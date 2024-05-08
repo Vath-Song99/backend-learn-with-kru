@@ -1,8 +1,6 @@
 import express, { Application } from "express";
 import { errorHandler } from "./middlewares/errorsHandler";
 // import Routehealths from './routes/v1/monolith.health';
-import swaggerUi from "swagger-ui-express";
-import * as swaggerDocument from "../public/swagger.json";
 import path from "path";
 import cors from "cors";
 import dotenv from 'dotenv'
@@ -36,7 +34,6 @@ const ROUTE_BASE = "/v1/auth";
 app.use(ROUTE_BASE, AuthRoute);
 app.use(ROUTE_BASE, CrudRoute)
 // handle swaggerUi
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // app.use(AUTH_ROUTE,Routehealths)
 

@@ -1,6 +1,5 @@
 import AccountVerificationModel from "../databases/models/account-verification.model";
 import { generateEmailVerificationToken } from "../utils/account-verification";
-import EmailSender from "../utils/email-sender";
 import StatusCode from "../utils/http-status-code";
 import {
   generatePassword,
@@ -16,6 +15,8 @@ import { GenerateTimeExpire } from "../utils/date-generate";
 import { TokenResponse } from "../utils/@types/oauth.type";
 import { Login } from "../@types/user.type";
 import { ApiError, BaseCustomError } from "../error/base-custom-error";
+import { publishDirectMessage } from "../queue/auth.producer";
+import { authChannel } from "../server";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -115,11 +116,20 @@ export class AuthServices {
       const newAccountVerification = await accountVerification.save();
 
       // step 5
-      const emailSender = EmailSender.getInstance();
-      emailSender.sendSignUpVerificationEmail({
-        toEmail: email,
-        emailVerificationToken: newAccountVerification.emailVerificationToken,
-      });
+      const messageDetails = {
+        receiverEmail: email,
+        verifyLink: `${newAccountVerification.emailVerificationToken}`,
+        template: "verifyEmail",
+      };
+
+      // Publish To Notification Service
+      await publishDirectMessage(
+        authChannel,
+        "learnwith kru notification",
+        "auth-email",
+        JSON.stringify(messageDetails),
+        "Verify email message has been sent to notification service"
+      );
     } catch (error) {
       throw error;
     }
@@ -156,13 +166,27 @@ export class AuthServices {
       }
 
       user.is_verified = true;
-      await user.save();
+      const newUser = await user.save();
+
+      const messageDetails = {
+        username: `${newUser.firstname} ${newUser.lastname}`,
+        email: newUser.email,
+        type: 'auth'
+      }
+
+      await publishDirectMessage(
+        authChannel,
+        'microsample-user-update',
+        'user-applier',
+        JSON.stringify(messageDetails),
+        'User details sent to user service'
+      )
 
       const jwtToken = await generateSignature({
         payload: user._id.toString(),
       });
       await this.accountVerificationRepo.DeleteVerificationByToken({ token });
-
+      
       return { user, jwtToken };
     } catch (error) {
       throw error;
