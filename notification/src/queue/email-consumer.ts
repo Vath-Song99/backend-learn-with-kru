@@ -20,7 +20,7 @@ export async function consumeAuthEmailMessages(
       channel = (await createQueueConnection()) as Channel;
     }
 
-    const exchangeName = 'microsample-email-notification';
+    const exchangeName = 'learnwithkru-verify-email-notification';
     const routingKey = 'auth-email';
     const queueName = 'auth-email-queue';
 
@@ -35,11 +35,12 @@ export async function consumeAuthEmailMessages(
       const { receiverEmail, username, verifyLink, resetLink, template } =
         JSON.parse(msg!.content.toString());
 
+      const verifyEmail = `http://localhost:3000/v1/auth/verify?token=${verifyLink}`
       const locals = {
         appLink: `${getConfig().clientUrl}`,
         appIcon: ``,
         username,
-        verifyLink,
+        verifyEmail,
         resetLink,
       };
 

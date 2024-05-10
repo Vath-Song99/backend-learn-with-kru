@@ -1,5 +1,5 @@
 
-import { ApiError, BaseCustomError } from "../../error/base-custom-error"
+import { ApiError } from "../../error/base-custom-error"
 import { UserRepo } from "../@types/repo-type"
 import { UserModel } from "../models/user.model"
 
@@ -13,6 +13,7 @@ export class UserRepository {
           firstname,
           lastname,
           email,
+          picture
         })
         
         if(!newUser){
@@ -24,9 +25,21 @@ export class UserRepository {
       }
   }
 
-  async FindOneUser (authId: string){
+  //by User Id
+  async FindUser(userId: string){
+    try{
+      const user = await UserModel.findOne({_id: userId});
+      return user
+    }catch(error: unknown){
+      throw error
+    }
+  }
+
+
+  // bu authId
+  async FindAuthUser (authId: string){
       try{  
-        const User = await UserModel.find({
+        const User = await UserModel.findOne({
           authId: authId
         });
         return User

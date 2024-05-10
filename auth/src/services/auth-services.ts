@@ -17,6 +17,7 @@ import { Login } from "../@types/user.type";
 import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import { publishDirectMessage } from "../queue/auth.producer";
 import { authChannel } from "../server";
+// import { createUser } from "../utils/http-request";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -125,7 +126,7 @@ export class AuthServices {
       // Publish To Notification Service
       await publishDirectMessage(
         authChannel,
-        "learnwith kru notification",
+        "learnwithkru-verify-email-notification",
         "auth-email",
         JSON.stringify(messageDetails),
         "Verify email message has been sent to notification service"
@@ -176,7 +177,7 @@ export class AuthServices {
 
       await publishDirectMessage(
         authChannel,
-        'microsample-user-update',
+        'learnwithkru-user-update-notification',
         'user-applier',
         JSON.stringify(messageDetails),
         'User details sent to user service'
@@ -185,6 +186,9 @@ export class AuthServices {
       const jwtToken = await generateSignature({
         payload: user._id.toString(),
       });
+
+      // await createUser(token);
+
       await this.accountVerificationRepo.DeleteVerificationByToken({ token });
       
       return { user, jwtToken };
@@ -213,11 +217,11 @@ export class AuthServices {
             }
            })
         }
-        const jwtToken = await generateSignature({ payload: id });
+        const jwtToken = await generateSignature({ payload: user._id.toString() });
         return {  jwtToken };
       }
 
-      await this.AuthRepo.CreateOauthUser({
+      const newUser = await this.AuthRepo.CreateOauthUser({
         firstname: given_name,
         lastname: family_name,
         email,
@@ -225,7 +229,7 @@ export class AuthServices {
         verified_email,
         profile_picture: picture,
       });
-      const jwtToken = await generateSignature({ payload: id });
+      const jwtToken = await generateSignature({ payload: newUser._id.toString() });
       return { jwtToken };
     } catch (error) {
       throw error;

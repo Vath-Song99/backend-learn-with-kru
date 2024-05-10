@@ -2,8 +2,9 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import fs from 'fs'
 import path from "path";
 import getConfig from "./config";
-import { BaseCustomError } from "../error/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "./http-status-code";
+import { logger } from "./logger";
 const privateKeyPath = path.join(__dirname, "../../private_key.pem");
 // Read the private key from the file
 const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
@@ -13,7 +14,8 @@ export const decodedToken = async (token: string) => {
     const data = await jwt.decode(token)as JwtPayload;
     return data.payload;
   } catch (error: unknown) {
-    throw error;
+    logger.error("Unable to decode in decodeToken() method !",error);
+    throw new ApiError("Can't Decode token!");
   }
 };
 

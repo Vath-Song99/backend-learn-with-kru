@@ -13,6 +13,9 @@ import {
   Body,
   Query,
 } from "tsoa";
+import { createUser } from "../utils/http-request";
+import { ApiError } from "../error/base-custom-error";
+import { generateSignature } from "../utils/jwt";
 
 @Route("/api/v1")
 export class AuthController {
@@ -38,9 +41,14 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const user = await authService.VerifyEmailToken(token);
-      
-      return user
-    } catch (error) {
+
+      const {data} = await createUser(user.jwtToken);
+      if(!data){
+          throw new ApiError("Can't create new user in to user service!")
+        }
+      const userJwtToken = await generateSignature({payload: data._id});
+      return {user: data, token: userJwtToken}
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -67,8 +75,15 @@ export class AuthController {
   async GoogleOAuth(@Body() code: string): Promise<any> {
     try {
       const authService = new AuthServices();
-      const user = await authService.SigninWithGoogleCallBack(code);
-      return user;
+      const {jwtToken} = await authService.SigninWithGoogleCallBack(code);
+
+     const {data} = await createUser(jwtToken);
+     if(!data){
+      throw new ApiError("Can't create new user in user service!")
+     }
+      const userJwtToken = await generateSignature({payload: data._id});
+
+      return {user: data , token: userJwtToken}
     } catch (error) {
       throw error;
     }
@@ -80,7 +95,15 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const newUser = await authService.SigninWithFacebookCallBack(code);
-      return newUser;
+      
+      const { data } = await createUser(newUser.jwtToken);
+      if(!data){
+       throw new ApiError("Can't create new user in user service!")
+      }
+       const userJwtToken = await generateSignature({payload: data._id});
+ 
+       return {user: data , token: userJwtToken}
+
     } catch (error) {
       throw error;
     }

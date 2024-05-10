@@ -4,7 +4,7 @@ import { createQueueConnection } from "./connection.queue";
 
 export async function publishDirectMessage(
   channel: Channel,
-  exchangeName: string = "learnwith kru notification",
+  exchangeName: string,
   routingKey: string,
   message: string,
   logMessage: string

@@ -69,17 +69,17 @@ AuthRoute.post(PATH_AUTH.resetPassword, async (req: Request ,res: Response , _ne
   }
 })
 
-AuthRoute
 
 AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextFunction) =>{
   const token = req.query.token as string
   try{
     const controller = new AuthController();
     const respone = await controller.VerifyEmail(token)
-
+    
     res.status(StatusCode.OK).json({
       message: 'Sign up success',
-      token: respone.jwtToken
+      data: respone.user,
+      token: respone.token
     });
   }catch(error: unknown){
     _next(error)
@@ -110,11 +110,12 @@ AuthRoute.get(
   
           const queryCode = code as string;
           const controller = new AuthController()
-          const userInfoResponse = await controller.GoogleOAuth(queryCode);
+          const respone = await controller.GoogleOAuth(queryCode);
           
           res.status(StatusCode.OK).json({
-            message: 'success',
-            token: userInfoResponse.jwtToken,
+            message: 'Create user success',
+            data: respone.user,
+            token: respone.token
           });
         } catch (error: unknown) {
           _next(error);
@@ -139,11 +140,12 @@ AuthRoute.get(
       const { code } = req.query;
       const queryCode = code as string;
       const controller = new AuthController()
-      const userInfoResponse = await controller.FacebookOAuth(queryCode);
+      const respone = await controller.FacebookOAuth(queryCode);
 
       res.status(StatusCode.OK).json({
         message: 'success',
-        token: userInfoResponse.jwtToken,
+        data: respone.user,
+        token: respone.token,
       });
     }catch(error: unknown){
       _next(error)
