@@ -24,10 +24,10 @@ Route.post(PATH_USER.CREATEUSER, async (req: Request , res: Response , _next: Ne
 
 
 Route.get(PATH_USER.GETUSER, async (req: Request, res: Response, _next: NextFunction) =>{
-    const {userId} = req.params
+    const {authId} = req.params
     try{
         const controller = new UserController();
-        const user = await controller.GetUser(userId);
+        const user = await controller.GetUser(authId);
 
         res.status(StatusCode.OK).json({
             message: "Get user Success",

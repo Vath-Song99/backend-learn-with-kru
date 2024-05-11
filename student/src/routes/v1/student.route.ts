@@ -9,7 +9,7 @@ import StatusCode from "../../utils/http-status-code";
 const Route = Router()
 
 Route.post (PATH_STUDENT.SIGNUP, studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
-    const token = req.session!.jwt
+    const token = req.headers.authorization?.split(' ')[1]
     const requestBody = req.body;
     try{
 

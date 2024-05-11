@@ -1,9 +1,5 @@
 import express, { Application } from "express";
 import { errorHandler } from "./middlewares/errorsHandler";
-// import Routehealths from './routes/v1/monolith.health';
-import swaggerUi from "swagger-ui-express";
-import * as swaggerDocument from "../public/swagger.json";
-
 import path from "path";
 import cors from "cors";
 import TeacherRoute from "./routes/v1/teacher.route";
@@ -33,7 +29,6 @@ app.use(loggerMiddleware);
 const ROUTE = "/v1/teachers";
 app.use(ROUTE, TeacherRoute);
 // handle swaggerUi
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // app.use(AUTH_ROUTE,Routehealths)
 

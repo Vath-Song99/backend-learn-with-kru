@@ -47,7 +47,7 @@ services:
       NODE_ENV: development
       PORT: "3001"
       ROUTE: "/api/v1"
-      MONGODB_URL: "mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/learnwithkru"
+      MONGODB_URL: "mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/auth"
       LOG_LEVEL: debug
       SMTP_HOST: smtp.gmail.com
       SMTP_PORT: "587"
@@ -63,7 +63,7 @@ services:
       API_GATEWAY: "http://localhost:3000"
       JWT_EXPIRES_IN: "30d"
       RABBITMQ_ENDPOINT: "amqp://myuser:mypassword@rabbitmq_container:5672"
-      USER_SERVICE: "http://localhost:3000/v1/users"
+      USER_SERVICE: "http://localhost:3004/v1/users"
 
   user:
     container_name: user_container
@@ -79,14 +79,13 @@ services:
       PORT: 3003
       ROUTE: /api/v1
       #auth service url
-      AUTH_SERVICE_GET: http://localhost:3000/v1/auth/user
+      AUTH_SERVICE_GET: http://localhost:3001/v1/auth/user
       # Database Service
-      MONGODB_URL: mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/user-db      
+      MONGODB_URL: mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/user  
       # Log Service
       LOG_LEVEL: debug
-      JWT_EXPIRES_IN: 30d
-      COOKIE_SECRET_KEY_ONE: 48a9c9a7bd58fff6a243d45fdf5dc31b
-      COOKIE_SECRET_KEY_TWO: 9309de3ec71d5c4920b855d0ceb3b477
+      API_GATEWAY: http://localhost:3000
+
   notification:
     container_name: notification_container
     build:
@@ -109,3 +108,43 @@ services:
       SENDER_EMAIL_PASSWORD: "wqfj ktkw mbrc hmdr"
     depends_on:
       - rabbitmq
+  student:
+    container_name: student_container
+    build:
+      context: ../student
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "3003:3003"
+    env_file: ../student/configs/.env
+    environment:
+      NODE_ENV: development
+      PORT: 3003     
+      ROUTE: /api/v1     
+      #auth service url
+      AUTH_SERVICE_GET: http://localhost:3001/v1/auth/user   
+      # Database Service
+      MONGODB_URL: mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/student    
+      # Log Service
+      LOG_LEVEL: debug  
+      JWT_EXPIRES_IN: 30d 
+      COOKIE_SECRET_KEY_ONE: 48a9c9a7bd58fff6a243d45fdf5dc31b
+      COOKIE_SECRET_KEY_TWO: 9309de3ec71d5c4920b855d0ceb3b477
+
+  teacher:
+    container_name: teacher_container
+    build:
+      context: ../teacher
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "3002:3002"
+    env_file: ../teacher/configs/.env
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      ROUTE: /api/v1
+      # Database Service
+      MONGODB_URL: mongodb+srv://learnwithkru:gT5jqfgZyQ8UmCNn@learnwithkru.elxl0wh.mongodb.net/teacher
+      # Log Service
+      LOG_LEVEL: debug

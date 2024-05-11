@@ -19,10 +19,10 @@ export class UserController {
 
    @SuccessResponse(StatusCode.OK, "OK")
    @Get(PATH_USER.GETUSER)
-   async GetUser (userId: string){
+   async GetUser (authId: string){
     try{
         const service = new UserServices();
-        const user = await service.GetUser(userId);
+        const user = await service.GetUser(authId);
 
         return user
     }catch(error: unknown){

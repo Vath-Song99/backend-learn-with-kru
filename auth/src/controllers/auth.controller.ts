@@ -13,12 +13,14 @@ import {
   Body,
   Query,
 } from "tsoa";
-import { createUser } from "../utils/http-request";
 import { ApiError } from "../error/base-custom-error";
 import { generateSignature } from "../utils/jwt";
+import { RequestUserService } from "../utils/http-request";
 
 @Route("/api/v1")
 export class AuthController {
+
+
   @Post(PATH_AUTH.signUp)
   @SuccessResponse(StatusCode.CREATED, "Created")
   @Middlewares(zodValidate(userValidateSchema))
@@ -42,12 +44,13 @@ export class AuthController {
       const authService = new AuthServices();
       const user = await authService.VerifyEmailToken(token);
 
-      const {data} = await createUser(user.jwtToken);
+      const requestUser = new RequestUserService();
+      const {data} = await requestUser.CreateUser(user.jwtToken);
       if(!data){
           throw new ApiError("Can't create new user in to user service!")
         }
-      const userJwtToken = await generateSignature({payload: data._id});
-      return {user: data, token: userJwtToken}
+      const userJwtToken = await generateSignature({payload: data._id.toString()});
+      return {data , token: userJwtToken}
     } catch (error: unknown) {
       throw error;
     }
@@ -75,15 +78,9 @@ export class AuthController {
   async GoogleOAuth(@Body() code: string): Promise<any> {
     try {
       const authService = new AuthServices();
-      const {jwtToken} = await authService.SigninWithGoogleCallBack(code);
+      const user = await authService.SigninWithGoogleCallBack(code);
 
-     const {data} = await createUser(jwtToken);
-     if(!data){
-      throw new ApiError("Can't create new user in user service!")
-     }
-      const userJwtToken = await generateSignature({payload: data._id});
-
-      return {user: data , token: userJwtToken}
+      return user
     } catch (error) {
       throw error;
     }
@@ -94,16 +91,9 @@ export class AuthController {
   async FacebookOAuth(@Body() code: string): Promise<any> {
     try {
       const authService = new AuthServices();
-      const newUser = await authService.SigninWithFacebookCallBack(code);
+      const user = await authService.SigninWithFacebookCallBack(code);
       
-      const { data } = await createUser(newUser.jwtToken);
-      if(!data){
-       throw new ApiError("Can't create new user in user service!")
-      }
-       const userJwtToken = await generateSignature({payload: data._id});
- 
-       return {user: data , token: userJwtToken}
-
+      return user
     } catch (error) {
       throw error;
     }

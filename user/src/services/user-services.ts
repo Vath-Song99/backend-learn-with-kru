@@ -1,5 +1,5 @@
 import {  UserRepository } from "../databases/repositories/user.repository";
-import { BaseCustomError } from "../error/base-custom-error";
+import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "../utils/http-status-code";
 import { getUserInfo } from "../utils/htttp-request";
 import { decodedToken } from "../utils/jwt";
@@ -37,9 +37,13 @@ export class  UserServices {
     }
   };
 
-  async GetUser(userId: string){
+  async GetUser(authId: string){
     try{
-      const user = await this.UserRepo.FindUser(userId);
+      const user = await this.UserRepo.FindUser(authId);
+
+      if(user === null){
+        throw new ApiError("Unable to find user in database!")
+      }
       return user
     }catch(error: unknown){
       throw error

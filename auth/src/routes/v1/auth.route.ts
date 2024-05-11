@@ -17,7 +17,6 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
 
         res.status(StatusCode.OK).json({
             message: 'please verify your Email!',
-            users: respone.newUser,
             token: respone.jwtToken
         })
     }catch(error: unknown){
@@ -36,7 +35,7 @@ AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request
 
       res.status(StatusCode.OK).json({
       message: 'Login Success',
-      user: user.existingUser,
+      data: user.data,
       token: user.jwtToken
     });
   }catch(error: unknown){
@@ -78,7 +77,7 @@ AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextF
     
     res.status(StatusCode.OK).json({
       message: 'Sign up success',
-      data: respone.user,
+      data: respone.data,
       token: respone.token
     });
   }catch(error: unknown){
@@ -114,8 +113,8 @@ AuthRoute.get(
           
           res.status(StatusCode.OK).json({
             message: 'Create user success',
-            data: respone.user,
-            token: respone.token
+            data: respone.data,
+            token: respone.jwtToken
           });
         } catch (error: unknown) {
           _next(error);
@@ -144,8 +143,8 @@ AuthRoute.get(
 
       res.status(StatusCode.OK).json({
         message: 'success',
-        data: respone.user,
-        token: respone.token,
+        data: respone.data,
+        token: respone.jwtToken,
       });
     }catch(error: unknown){
       _next(error)

@@ -46,14 +46,13 @@ const proxyConfigs: ProxyConfig = {
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-          let responseBody: { message?: string , token?: string, redirectUrl?: string, data?: Array<object> , errors?: Array<object> };
+          let responseBody: { message?: string , data?: Array<object> , token?: string, redirectUrl?: string , errors?: Array<object> };
           if (proxyRes.statusCode === 302 && proxyRes.headers.location) {
             const redirectUrl = proxyRes.headers.location;
             // Forward the redirect URL to the client
             return res.redirect(redirectUrl);
           }
           try {
-
             responseBody = JSON.parse(bodyString);
             
             // If Response Error, Not Modified Response
@@ -66,8 +65,8 @@ const proxyConfigs: ProxyConfig = {
               (req as Request).session!.jwt = responseBody.token;
             }
       
-            // Modify response to send only the message to the client
-            res.json({ message: responseBody.message , data: responseBody.data });
+            // Modify response to send  the message and data to the client
+            res.json({ message: responseBody.message , data: responseBody.data});
           } catch (error) {
             return res.status(500).json({ message: "Error parsing response",  });
           }

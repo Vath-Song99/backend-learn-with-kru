@@ -22,9 +22,6 @@ function createConfig(configPath: string) {
     logLevel: process.env.LOG_LEVEL,
     apiGateway: process.env.API_GATEWAY,
     authService: process.env.AUTH_SERVICE_GET,
-    cookieSecretKeyOne: process.env.COOKIE_SECRET_KEY_ONE,
-    cookieSecretKeyTwo: process.env.COOKIE_SECRET_KEY_TWO,
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN
   };
 }
 

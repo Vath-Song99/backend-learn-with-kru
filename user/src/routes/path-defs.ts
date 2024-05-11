@@ -2,6 +2,6 @@
 export const PATH_USER = {
     BASE: "/v1",
     CREATEUSER: "/users",
-    GETUSER: "/users/:userId",
+    GETUSER: "/users/:authId",
     UPDATEUSER: "/users/:userId"
 }
