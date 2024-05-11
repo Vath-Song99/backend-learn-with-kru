@@ -296,13 +296,10 @@ export class AuthServices {
         );    
       }
       // step 4
-      const authJwtToken = await generateSignature({ payload: existingUser._id.toString()});
-
       const  requestUser = new RequestUserService();
-      const { data } = await requestUser.GetUser(authJwtToken)
+      const { data } = await requestUser.GetUser(existingUser._id.toString())
 
       const jwtToken = await generateSignature({payload: data._id.toString()})
-
       return { data , jwtToken };
     } catch (error) {
       if(error instanceof BaseCustomError){
