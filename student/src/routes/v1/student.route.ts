@@ -6,14 +6,15 @@ import { StudentSchemas } from "../../schemas/student-validate";
 import StatusCode from "../../utils/http-status-code";
 
 
-
 const Route = Router()
 
 Route.post (PATH_STUDENT.SIGNUP, studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
-    const requestBody = req.body
+    const token = req.session!.jwt
+    const requestBody = req.body;
     try{
+
         const controller = new StudentController();
-        const newStudent = await controller.Signup(requestBody)
+        const newStudent = await controller.Signup(requestBody, token as string);
 
         res.status(StatusCode.CREATED).json({
             message: "success",
