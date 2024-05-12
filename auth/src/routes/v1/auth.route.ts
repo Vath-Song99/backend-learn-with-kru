@@ -78,7 +78,7 @@ AuthRoute.get(PATH_AUTH.verify, async (req: Request ,res: Response, _next: NextF
     res.status(StatusCode.OK).json({
       message: 'Sign up success',
       data: respone.data,
-      token: respone.token
+      token: respone.jwtToken
     });
   }catch(error: unknown){
     _next(error)

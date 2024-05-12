@@ -13,9 +13,6 @@ import {
   Body,
   Query,
 } from "tsoa";
-import { ApiError } from "../error/base-custom-error";
-import { generateSignature } from "../utils/jwt";
-import { RequestUserService } from "../utils/http-request";
 
 @Route("/api/v1")
 export class AuthController {
@@ -44,13 +41,7 @@ export class AuthController {
       const authService = new AuthServices();
       const user = await authService.VerifyEmailToken(token);
 
-      const requestUser = new RequestUserService();
-      const {data} = await requestUser.CreateUser(user.jwtToken);
-      if(!data){
-          throw new ApiError("Can't create new user in to user service!")
-        }
-      const userJwtToken = await generateSignature({payload: data._id.toString()});
-      return {data , token: userJwtToken}
+      return user
     } catch (error: unknown) {
       throw error;
     }

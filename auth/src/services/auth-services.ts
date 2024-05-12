@@ -8,7 +8,7 @@ import {
 } from "../utils/jwt";
 import { AccountVerificationRepository } from "../databases/repositories/account-verification.repository";
 import { OauthConfig } from "../utils/oauth-configs";
-import { AuthService } from "./@types/auth-service";
+import { AuthService, UserService } from "./@types/auth-service";
 import { AuthRepository } from "../databases/repositories/auth.respository";
 import { ObjectId } from "mongodb";
 import { GenerateTimeExpire } from "../utils/date-generate";
@@ -18,7 +18,6 @@ import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import { publishDirectMessage } from "../queue/auth.producer";
 import { authChannel } from "../server";
 import { RequestUserService } from "../utils/http-request";
-// import { createUser } from "../utils/http-request";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -44,7 +43,9 @@ export class AuthServices {
       const hashedPassword = await generatePassword(password as string);
 
       // step 2
-      const existingUser = await this.AuthRepo.FindUserByEmail({ email });
+      const existingUser = await this.AuthRepo.FindUserByEmail({
+        email: email as string,
+      });
       if (existingUser) {
         if (existingUser.is_verified === true) {
           throw new BaseCustomError(
@@ -52,7 +53,9 @@ export class AuthServices {
             StatusCode.BAD_REQUEST
           );
         }
-        this.accountVerificationRepo.DeleteAccountVerifyByAuthId({authId: existingUser._id})
+        this.accountVerificationRepo.DeleteAccountVerifyByAuthId({
+          authId: existingUser._id,
+        });
         this.SendVerifyEmailToken({
           authId: existingUser._id,
           email: existingUser.email as string,
@@ -79,8 +82,8 @@ export class AuthServices {
       const jwtToken = await generateSignature({
         payload: newUser._id.toString(),
       });
-      if(!jwtToken){
-        throw new ApiError("Unable to generate jwt token!")
+      if (!jwtToken) {
+        throw new ApiError("Unable to generate jwt token!");
       }
       return { newUser, jwtToken };
     } catch (error: unknown) {
@@ -170,29 +173,29 @@ export class AuthServices {
       user.is_verified = true;
       const newUser = await user.save();
 
-      const messageDetails = {
-        username: `${newUser.firstname} ${newUser.lastname}`,
-        email: newUser.email,
-        type: 'auth'
+      const { _id, firstname, lastname, email } = newUser;
+
+      // Create user object for the request
+      const userData = {
+        authId: _id.toString(),
+        firstname: firstname as string,
+        lastname: lastname as string,
+        email: email as string,
+        picture: null,
+      };
+      const requestUser = new RequestUserService();
+      const { data } = await requestUser.CreateUser(userData);
+
+      if (!data) {
+        throw new ApiError("Can't create new user in to user service!");
       }
-
-      await publishDirectMessage(
-        authChannel,
-        'learnwithkru-user-update-notification',
-        'user-applier',
-        JSON.stringify(messageDetails),
-        'User details sent to user service'
-      )
-
       const jwtToken = await generateSignature({
-        payload: user._id.toString(),
+        payload: data._id.toString(),
       });
 
-      // await createUser(token);
-
       await this.accountVerificationRepo.DeleteVerificationByToken({ token });
-      
-      return { user, jwtToken };
+
+      return { data, jwtToken };
     } catch (error) {
       throw error;
     }
@@ -210,27 +213,35 @@ export class AuthServices {
         userInfoResponse.data;
       const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
-        if(!user.googleId){
-          const newUser = await this.AuthRepo.FindUserByIdAndUpdate({id: user._id ,
-            updates:{
+        if (!user.googleId) {
+          const newUser = await this.AuthRepo.FindUserByIdAndUpdate({
+            id: user._id,
+            updates: {
               googleId: id,
               is_verified: true,
-              profile_picture: picture,
-            }
-           })
-           const authJwtToken = await generateSignature({payload: newUser!._id.toString()});
+              picture,
+            },
+          });
 
-           const requestUser = new RequestUserService();
-           const { data } = await requestUser.CreateUser(authJwtToken)
-           const {_id } = data
-           const jwtToken = await generateSignature({ payload: _id.toString()});
-           return { data , jwtToken  };
+          const userData: UserService = {
+            authId: newUser!._id.toString(),
+            firstname: newUser!.firstname as string,
+            lastname: newUser!.lastname as string,
+            email: newUser!.email as string,
+            picture: newUser!.picture as string,
+          };
+
+          const requestUser = new RequestUserService();
+          const { data } = await requestUser.CreateUser(userData);
+          const { _id } = data;
+          const jwtToken = await generateSignature({ payload: _id.toString() });
+          return { data, jwtToken };
         }
         const requestUser = new RequestUserService();
-        const { data } = await requestUser.GetUser(user._id.toString())
-        const {_id } = data
+        const { data } = await requestUser.GetUser(user._id.toString());
+        const { _id } = data;
         const jwtToken = await generateSignature({ payload: _id.toString() });
-        return { data ,  jwtToken  };
+        return { data, jwtToken };
       }
 
       const newUser = await this.AuthRepo.CreateOauthUser({
@@ -239,19 +250,25 @@ export class AuthServices {
         email,
         googleId: id,
         verified_email,
-        profile_picture: picture,
+        picture,
       });
-
-      const authJwtToken = await generateSignature({payload: newUser._id.toString()});
-
+      const userData: UserService = {
+        authId: newUser!._id.toString(),
+        firstname: newUser!.firstname as string,
+        lastname: newUser!.lastname as string,
+        email: newUser!.email as string,
+        picture: newUser!.picture as string,
+      };
       const requestUser = new RequestUserService();
-      const {data} = await requestUser.CreateUser(authJwtToken);
-     if(!data){
-      throw new ApiError("Can't create new user in user service!")
-     }
+      const { data } = await requestUser.CreateUser(userData);
+      if (!data) {
+        throw new ApiError("Can't create new user in user service!");
+      }
 
-     const jwtToken = await generateSignature({payload: data._id.toString()});
-      return { data , jwtToken };
+      const jwtToken = await generateSignature({
+        payload: data._id.toString(),
+      });
+      return { data, jwtToken };
     } catch (error) {
       throw error;
     }
@@ -264,8 +281,6 @@ export class AuthServices {
     return isToken;
   }
 
-
-
   async Login(user: Login) {
     // TODO LIST
     //******************* */
@@ -274,15 +289,18 @@ export class AuthServices {
     // 3. checking for correct password
     // 4. generate jwt token
     try {
-      const { email , password } = user;
+      const { email, password } = user;
       // step 1
-      const existingUser = await this.AuthRepo.FindUserByEmail({email});
+      const existingUser = await this.AuthRepo.FindUserByEmail({ email });
       if (!existingUser) {
         throw new BaseCustomError("User not exist", StatusCode.NOT_FOUND);
       }
       // step 2
-      if(existingUser.is_verified === false){
-        throw new BaseCustomError("your email isn't verify",StatusCode.BAD_REQUEST)
+      if (existingUser.is_verified === false) {
+        throw new BaseCustomError(
+          "your email isn't verify",
+          StatusCode.BAD_REQUEST
+        );
       }
       // step 3
       const isPwdCorrect = await validatePassword({
@@ -293,19 +311,18 @@ export class AuthServices {
         throw new BaseCustomError(
           "Email or Password is incorrect",
           StatusCode.BAD_REQUEST
-        );    
+        );
       }
       // step 4
-      const  requestUser = new RequestUserService();
-      const { data } = await requestUser.GetUser(existingUser._id.toString())
+      const requestUser = new RequestUserService();
+      const { data } = await requestUser.GetUser(existingUser._id.toString());
 
-      const jwtToken = await generateSignature({payload: data._id.toString()})
-      return { data , jwtToken };
+      const jwtToken = await generateSignature({
+        payload: data._id.toString(),
+      });
+      return { data, jwtToken };
     } catch (error) {
-      if(error instanceof BaseCustomError){
-        throw error
-      }
-      throw new BaseCustomError("Somthing went wrong!", StatusCode.INTERNAL_SERVER_ERROR)
+      throw error;
     }
   }
 
@@ -334,11 +351,11 @@ export class AuthServices {
       });
       if (existingUser) {
         const requestUser = new RequestUserService();
-        const { data } = await requestUser.GetUser(existingUser._id.toString())
-        console.log(data)
-        const {_id } = data
+        const { data } = await requestUser.GetUser(existingUser._id.toString());
+
+        const { _id } = data;
         const jwtToken = await generateSignature({ payload: _id.toString() });
-        return { data ,  jwtToken  };
+        return { data, jwtToken };
       }
       //step 4
       const newUser = await this.AuthRepo.CreateOauthUser({
@@ -347,34 +364,49 @@ export class AuthServices {
         email,
         facebookId: id,
         verified_email: true,
-        profile_picture: picture.data.url,
+        picture: picture.data.url,
       });
       //step 5
-      const authJwtToken = await generateSignature({ payload: newUser._id.toString() });
+      const { _id, firstname, lastname } = newUser;
+
+      const userData: UserService = {
+        authId: _id.toString(),
+        firstname: firstname as string,
+        lastname: lastname as string,
+        email: newUser!.email as string,
+        picture: newUser!.picture as string,
+      };
       const requestUser = new RequestUserService();
-      const user = await requestUser.CreateUser(authJwtToken);
-     if(!user.data){
-      throw new ApiError("Can't create new user in user service!")
-     }
-     const jwtToken = await generateSignature({payload: user.data._id.toString()});
-      return { data: user.data , jwtToken };
+      const user = await requestUser.CreateUser(userData);
+      if (!user.data) {
+        throw new ApiError("Can't create new user in user service!");
+      }
+      const jwtToken = await generateSignature({
+        payload: user.data._id.toString(),
+      });
+      return { data: user.data, jwtToken };
     } catch (error) {
       throw error;
     }
   }
 
-  async ResetPassword({email}:{email: string}){
+  async ResetPassword({ email }: { email: string }) {
     //***************** */
     // 1. find exist user
-    try{
-      const existingUser = await this.AuthRepo.FindUserByEmail({email});
-      if(existingUser){
-        if(!existingUser.is_verified){
-          throw new BaseCustomError("Your Email isn't Verify, Please verify your email!",StatusCode.UNAUTHORIZED)
-        }
-        else{
-          if(!existingUser.password){
-            throw new BaseCustomError("Your account is sign up with third-party app",StatusCode.BAD_REQUEST)
+    try {
+      const existingUser = await this.AuthRepo.FindUserByEmail({ email });
+      if (existingUser) {
+        if (!existingUser.is_verified) {
+          throw new BaseCustomError(
+            "Your Email isn't Verify, Please verify your email!",
+            StatusCode.UNAUTHORIZED
+          );
+        } else {
+          if (!existingUser.password) {
+            throw new BaseCustomError(
+              "Your account is sign up with third-party app",
+              StatusCode.BAD_REQUEST
+            );
           }
           this.SendVerifyEmailToken({
             authId: existingUser._id,
@@ -382,9 +414,9 @@ export class AuthServices {
           });
         }
       }
-      throw new BaseCustomError("User not found!",StatusCode.NOT_FOUND)
-    }catch(error: unknown){
-      throw error
+      throw new BaseCustomError("User not found!", StatusCode.NOT_FOUND);
+    } catch (error: unknown) {
+      throw error;
     }
   }
 }

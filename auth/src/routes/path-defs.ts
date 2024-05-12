@@ -17,3 +17,12 @@ export const PATH_AUTH = {
 export const PATH_CRUD = {
   getUser: "/user/:authId"
 }
+
+
+export const PATH_SERVICE ={
+  BASE: "/v1",
+  USER: {
+    CREATE_USER: "/v1/users",
+    GET_USER: "/v1/users"
+  }
+}

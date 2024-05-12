@@ -7,7 +7,7 @@ export interface OauthUserRepo extends User{
     googleId?: string;
     facebookId?: string;
     verified_email: boolean;
-    profile_picture?: string
+    picture?: string
 }
 
 export interface PaginateRepo {
@@ -21,6 +21,6 @@ export interface UserUpdates{
     password?: string;
     googleId?: string;
     is_verified?: boolean;
-    profile_picture?: string;
+    picture?: string;
 }
   

@@ -32,7 +32,7 @@ const authSchemas = new mongoose.Schema({
     facebookId: {
         type: String
     },
-    profile_picture: {
+    picture: {
         type: String
     }
 })
