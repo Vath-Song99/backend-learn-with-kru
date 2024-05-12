@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 export class AuthRepository {
   async CreateAuthUser({ firstname, lastname, email, password }: AuthUserRepo) {
     try {
-      const existingUser = await this.FindUserByEmail({ email });
+      const existingUser = await this.FindUserByEmail({ email: email as string });
       if (existingUser) {
         throw new BaseCustomError("Email already exists", StatusCode.FORBIDDEN);
       }
@@ -35,7 +35,7 @@ export class AuthRepository {
     googleId,
     facebookId,
     verified_email,
-    profile_picture,
+    picture,
   }: OauthUserRepo) {
     try {
       const user = new authModel({
@@ -46,7 +46,7 @@ export class AuthRepository {
         googleId,
         facebookId,
         is_verified: verified_email,
-        profile_picture,
+        picture,
       });
       const userResult = await user.save();
       if (!user) {

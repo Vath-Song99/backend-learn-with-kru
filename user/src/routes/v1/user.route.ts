@@ -8,10 +8,10 @@ const Route = Router()
 
 
 Route.post(PATH_USER.CREATEUSER, async (req: Request , res: Response , _next: NextFunction) =>{
-    const token =  req.query.token as string
+    const requestBody = req.body;
     try{
         const controller = new UserController();
-        const newUser = await controller.Createuser(token);
+        const newUser = await controller.Createuser(requestBody);
 
         res.status(StatusCode.OK).json({
             message: 'Create user success',

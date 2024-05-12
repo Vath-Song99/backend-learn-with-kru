@@ -67,6 +67,8 @@ const proxyConfigs: ProxyConfig = {
             return res.redirect(redirectUrl);
           }
           try {
+
+            logger.info("Res BodyString: ", bodyString)
             responseBody = JSON.parse(bodyString);
 
             // If Response Error, Not Modified Response
