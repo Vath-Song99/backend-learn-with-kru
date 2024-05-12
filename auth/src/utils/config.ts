@@ -23,7 +23,8 @@ function createConfig(configPath: string) {
     rabbitMQ: process.env.RABBITMQ_ENDPOINT,
     clientUrl: process.env.CLIENT_URL,
     apiGateway: process.env.API_GATEWAY,
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN,
+    userService: process.env.USER_SERVICE
   };
 }
 

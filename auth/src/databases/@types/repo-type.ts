@@ -21,5 +21,6 @@ export interface UserUpdates{
     password?: string;
     googleId?: string;
     is_verified?: boolean;
+    profile_picture?: string;
 }
   

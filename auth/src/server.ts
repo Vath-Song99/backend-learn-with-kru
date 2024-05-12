@@ -2,9 +2,10 @@ import path from "path";
 import app from "./app";
 import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
-import EmailSender from "./utils/email-sender";
-import NodemailerEmailApi from "./utils/nodemailer-email-api";
+import { Channel } from "amqplib";
+import { createQueueConnection } from "./queue/connection.queue";
 
+export let authChannel: Channel
 
 async function run() {
   try {
@@ -20,14 +21,11 @@ async function run() {
     );
     const config = createConfig(configPath);
 
-  // Activate Email Sender with EmailAPI [NodeMailer]
-  const emailSender = EmailSender.getInstance();
-  emailSender.activate();
-  emailSender.setEmailApi(new NodemailerEmailApi());
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();
     await mongodb.connect({ url: config.mongoUrl as string });
+    authChannel = (await createQueueConnection()) as Channel
     // Start Server
     const server = app.listen(config.port, () => {
     });

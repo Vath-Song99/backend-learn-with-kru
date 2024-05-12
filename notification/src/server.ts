@@ -1,62 +1,59 @@
-import path from "path";
-import app from "./app";
-import createConfig from "./utils/config";
-import MongoDBConnector from "./databases";
-import EmailSender from "./utils/email-sender";
-import NodemailerEmailApi from "./utils/nodemailer-email-api";
+import app from './app';
+import { startQueue } from './queue/connection.queue';
+import getConfig from './utils/config';
+import EmailSender from './utils/email-sender';
+import { logInit, logger } from './utils/logger';
+import NodemailerEmailApi from './utils/nodemailer-email-api';
+
 
 async function run() {
   try {
-    const currentEnv = process.env.NODE_ENV || "development";
+    const config = getConfig();
 
-    const configPath = path.join(
-      __dirname,
-      currentEnv === "development"
-        ? "../configs/.env"
-        : currentEnv === "staging"
-          ? "../configs/.env.staging"
-          : "../configs/.env.production"
+    // Activate Logger
+    logInit({ env: process.env.NODE_ENV, logLevel: config.logLevel });
+
+    // Activate Email Sender with EmailAPI [NodeMailer]
+    const emailSender = EmailSender.getInstance();
+    emailSender.activate();
+    emailSender.setEmailApi(new NodemailerEmailApi());
+
+    // Activate RabbitMQ
+    await startQueue();
+
+    logger.info(
+      `Worker with process id of ${process.pid} on notification server has started.`
     );
-    const config = createConfig(configPath);
-
-  // Activate Email Sender with EmailAPI [NodeMailer]
-  const emailSender = EmailSender.getInstance();
-  emailSender.activate();
-  emailSender.setEmailApi(new NodemailerEmailApi());
-
-    // Activate Database
-    const mongodb = MongoDBConnector.getInstance();
-    await mongodb.connect({ url: config.mongoUrl as string });
     // Start Server
     const server = app.listen(config.port, () => {
+      logger.info(`Notification Server is listening on port: ${config.port}`);
     });
+
     const exitHandler = async () => {
       if (server) {
         server.close(async () => {
-          console.log("server closed!");
-          await mongodb.disconnect();
-          console.log("mongodb disconnected!");
+          logger.info('server closed!');
 
-          // Gracefully Terminate 
+          // Gracefully Terminate
           process.exit(1); // terminate the process due to error
         });
       } else {
-        await mongodb.disconnect(); // In case the server isn't running but DB needs to be disconnected
-        console.log("MongoDB disconnected.");
         process.exit(1);
       }
     };
+
     const unexpectedErrorHandler = (error: unknown) => {
-      console.log("unhandled error", { error });
+      logger.error(`unhandled error, ${error}`);
       exitHandler();
     };
+
     // Error that might occur duing execution that not caught by any try/catch blocks
-    process.on("uncaughtException", unexpectedErrorHandler); // Syncronous
-    process.on("unhandledRejection", unexpectedErrorHandler); // Asyncronous
+    process.on('uncaughtException', unexpectedErrorHandler); // Syncronous
+    process.on('unhandledRejection', unexpectedErrorHandler); // Asyncronous
 
     // A termination signal typically sent from OS or other software (DOCKER, KUBERNETES)
-    process.on("SIGTERM", () => {
-      console.log("SIGTERM received");
+    process.on('SIGTERM', () => {
+      logger.info('SIGTERM received');
       if (server) {
         // Stop the server from accepting new request but keeps existing connection open until all ongoin request are done
         server.close();
@@ -64,7 +61,11 @@ async function run() {
     });
   } catch (error) {
     console.log(error);
+    logger.error(`Failed to initialize application ${error}`);
+    process.exit(1);
   }
 }
 
-run();
+if (process.env.NODE_ENV !== 'testing') {
+  run();
+}

@@ -13,9 +13,14 @@ import {
   Body,
   Query,
 } from "tsoa";
+import { ApiError } from "../error/base-custom-error";
+import { generateSignature } from "../utils/jwt";
+import { RequestUserService } from "../utils/http-request";
 
 @Route("/api/v1")
 export class AuthController {
+
+
   @Post(PATH_AUTH.signUp)
   @SuccessResponse(StatusCode.CREATED, "Created")
   @Middlewares(zodValidate(userValidateSchema))
@@ -38,9 +43,15 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const user = await authService.VerifyEmailToken(token);
-      
-      return user
-    } catch (error) {
+
+      const requestUser = new RequestUserService();
+      const {data} = await requestUser.CreateUser(user.jwtToken);
+      if(!data){
+          throw new ApiError("Can't create new user in to user service!")
+        }
+      const userJwtToken = await generateSignature({payload: data._id.toString()});
+      return {data , token: userJwtToken}
+    } catch (error: unknown) {
       throw error;
     }
   }
@@ -68,7 +79,8 @@ export class AuthController {
     try {
       const authService = new AuthServices();
       const user = await authService.SigninWithGoogleCallBack(code);
-      return user;
+
+      return user
     } catch (error) {
       throw error;
     }
@@ -79,8 +91,9 @@ export class AuthController {
   async FacebookOAuth(@Body() code: string): Promise<any> {
     try {
       const authService = new AuthServices();
-      const newUser = await authService.SigninWithFacebookCallBack(code);
-      return newUser;
+      const user = await authService.SigninWithFacebookCallBack(code);
+      
+      return user
     } catch (error) {
       throw error;
     }

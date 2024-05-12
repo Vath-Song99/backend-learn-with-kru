@@ -1,10 +1,12 @@
 {
   "dependencies": {
     "@tsoa/runtime": "^6.2.0",
+    "@types/amqplib": "^0.10.5",
     "@types/axios": "^0.14.0",
     "@types/nodemailer": "^6.4.14",
     "@types/on-headers": "^1.0.3",
     "@types/winston": "^2.4.4",
+    "amqplib": "^0.10.4",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",

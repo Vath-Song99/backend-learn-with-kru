@@ -1,6 +1,5 @@
 import AccountVerificationModel from "../databases/models/account-verification.model";
 import { generateEmailVerificationToken } from "../utils/account-verification";
-import EmailSender from "../utils/email-sender";
 import StatusCode from "../utils/http-status-code";
 import {
   generatePassword,
@@ -16,6 +15,10 @@ import { GenerateTimeExpire } from "../utils/date-generate";
 import { TokenResponse } from "../utils/@types/oauth.type";
 import { Login } from "../@types/user.type";
 import { ApiError, BaseCustomError } from "../error/base-custom-error";
+import { publishDirectMessage } from "../queue/auth.producer";
+import { authChannel } from "../server";
+import { RequestUserService } from "../utils/http-request";
+// import { createUser } from "../utils/http-request";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -115,11 +118,20 @@ export class AuthServices {
       const newAccountVerification = await accountVerification.save();
 
       // step 5
-      const emailSender = EmailSender.getInstance();
-      emailSender.sendSignUpVerificationEmail({
-        toEmail: email,
-        emailVerificationToken: newAccountVerification.emailVerificationToken,
-      });
+      const messageDetails = {
+        receiverEmail: email,
+        verifyLink: `${newAccountVerification.emailVerificationToken}`,
+        template: "verifyEmail",
+      };
+
+      // Publish To Notification Service
+      await publishDirectMessage(
+        authChannel,
+        "learnwithkru-verify-email-notification",
+        "auth-email",
+        JSON.stringify(messageDetails),
+        "Verify email message has been sent to notification service"
+      );
     } catch (error) {
       throw error;
     }
@@ -156,13 +168,30 @@ export class AuthServices {
       }
 
       user.is_verified = true;
-      await user.save();
+      const newUser = await user.save();
+
+      const messageDetails = {
+        username: `${newUser.firstname} ${newUser.lastname}`,
+        email: newUser.email,
+        type: 'auth'
+      }
+
+      await publishDirectMessage(
+        authChannel,
+        'learnwithkru-user-update-notification',
+        'user-applier',
+        JSON.stringify(messageDetails),
+        'User details sent to user service'
+      )
 
       const jwtToken = await generateSignature({
         payload: user._id.toString(),
       });
-      await this.accountVerificationRepo.DeleteVerificationByToken({ token });
 
+      // await createUser(token);
+
+      await this.accountVerificationRepo.DeleteVerificationByToken({ token });
+      
       return { user, jwtToken };
     } catch (error) {
       throw error;
@@ -182,18 +211,29 @@ export class AuthServices {
       const user = await this.AuthRepo.FindUserByEmail({ email });
       if (user) {
         if(!user.googleId){
-           await this.AuthRepo.FindUserByIdAndUpdate({id: user._id ,
+          const newUser = await this.AuthRepo.FindUserByIdAndUpdate({id: user._id ,
             updates:{
               googleId: id,
-              is_verified: true
+              is_verified: true,
+              profile_picture: picture,
             }
            })
+           const authJwtToken = await generateSignature({payload: newUser!._id.toString()});
+
+           const requestUser = new RequestUserService();
+           const { data } = await requestUser.CreateUser(authJwtToken)
+           const {_id } = data
+           const jwtToken = await generateSignature({ payload: _id.toString()});
+           return { data , jwtToken  };
         }
-        const jwtToken = await generateSignature({ payload: id });
-        return {  jwtToken };
+        const requestUser = new RequestUserService();
+        const { data } = await requestUser.GetUser(user._id.toString())
+        const {_id } = data
+        const jwtToken = await generateSignature({ payload: _id.toString() });
+        return { data ,  jwtToken  };
       }
 
-      await this.AuthRepo.CreateOauthUser({
+      const newUser = await this.AuthRepo.CreateOauthUser({
         firstname: given_name,
         lastname: family_name,
         email,
@@ -201,8 +241,17 @@ export class AuthServices {
         verified_email,
         profile_picture: picture,
       });
-      const jwtToken = await generateSignature({ payload: id });
-      return { jwtToken };
+
+      const authJwtToken = await generateSignature({payload: newUser._id.toString()});
+
+      const requestUser = new RequestUserService();
+      const {data} = await requestUser.CreateUser(authJwtToken);
+     if(!data){
+      throw new ApiError("Can't create new user in user service!")
+     }
+
+     const jwtToken = await generateSignature({payload: data._id.toString()});
+      return { data , jwtToken };
     } catch (error) {
       throw error;
     }
@@ -247,9 +296,14 @@ export class AuthServices {
         );    
       }
       // step 4
-      const jwtToken = await generateSignature({ payload: existingUser._id.toString()});
+      const authJwtToken = await generateSignature({ payload: existingUser._id.toString()});
 
-      return { existingUser , jwtToken };
+      const  requestUser = new RequestUserService();
+      const { data } = await requestUser.GetUser(authJwtToken)
+
+      const jwtToken = await generateSignature({payload: data._id.toString()})
+
+      return { data , jwtToken };
     } catch (error) {
       if(error instanceof BaseCustomError){
         throw error
@@ -282,11 +336,15 @@ export class AuthServices {
         facebookId: id,
       });
       if (existingUser) {
-        const jwtToken = await generateSignature({ payload: id });
-        return { profile: existingUser, jwtToken };
+        const requestUser = new RequestUserService();
+        const { data } = await requestUser.GetUser(existingUser._id.toString())
+        console.log(data)
+        const {_id } = data
+        const jwtToken = await generateSignature({ payload: _id.toString() });
+        return { data ,  jwtToken  };
       }
       //step 4
-        await this.AuthRepo.CreateOauthUser({
+      const newUser = await this.AuthRepo.CreateOauthUser({
         firstname: first_name,
         lastname: last_name,
         email,
@@ -295,9 +353,14 @@ export class AuthServices {
         profile_picture: picture.data.url,
       });
       //step 5
-      const jwtToken = await generateSignature({ payload: id });
-
-      return {  jwtToken };
+      const authJwtToken = await generateSignature({ payload: newUser._id.toString() });
+      const requestUser = new RequestUserService();
+      const user = await requestUser.CreateUser(authJwtToken);
+     if(!user.data){
+      throw new ApiError("Can't create new user in user service!")
+     }
+     const jwtToken = await generateSignature({payload: user.data._id.toString()});
+      return { data: user.data , jwtToken };
     } catch (error) {
       throw error;
     }

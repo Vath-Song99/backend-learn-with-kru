@@ -1,5 +1,5 @@
 node_modules/
 
 
-configs/.env
-configs/.env.prod
+# configs/.env
+# configs/.env.prod
