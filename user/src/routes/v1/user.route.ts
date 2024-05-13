@@ -36,6 +36,6 @@ Route.get(PATH_USER.GETUSER, async (req: Request, res: Response, _next: NextFunc
     }catch(error: unknown){
         _next(error)
     }
-})
+});
 
 export default Route

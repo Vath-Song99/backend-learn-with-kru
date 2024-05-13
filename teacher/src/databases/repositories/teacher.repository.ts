@@ -1,8 +1,8 @@
 import { Teacher } from "../../@types/teacher.type";
-import { ApiError, BaseCustomError } from "../../utils/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
 import { teacherModel } from "../models/teacher.model";
 import { PaginateRepo } from "../@types/repo-type";
+import { ApiError, BaseCustomError } from "../../error/base-custom-error";
 
 export class TeacherRepository {
   constructor() {}
@@ -72,17 +72,20 @@ export class TeacherRepository {
 
   async FindOneTeacher({ _id }: { _id: string }) {
     try {
-      const teacher = await teacherModel.findById(_id)
+      const teacher = await teacherModel.findById(_id);
 
-      if(!teacher) {
-        throw new BaseCustomError("No teacher match this id!", StatusCode.NOT_FOUND);
+      if (!teacher) {
+        throw new BaseCustomError(
+          "No teacher match this id!",
+          StatusCode.NOT_FOUND
+        );
       }
       return teacher;
     } catch (error: unknown) {
-     if(error instanceof BaseCustomError){
-      throw error
-     }
-     throw new ApiError("Somthing went wrong!")
+      if (error instanceof BaseCustomError) {
+        throw error;
+      }
+      throw new ApiError("Somthing went wrong!");
     }
   }
 }

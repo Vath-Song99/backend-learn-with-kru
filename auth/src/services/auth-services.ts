@@ -49,7 +49,7 @@ export class AuthServices {
       if (existingUser) {
         if (existingUser.is_verified === true) {
           throw new BaseCustomError(
-            "Your account already signup, please login instead",
+            "Your account is already signed up. Please log in instead.",
             StatusCode.BAD_REQUEST
           );
         }
@@ -61,7 +61,7 @@ export class AuthServices {
           email: existingUser.email as string,
         });
         throw new BaseCustomError(
-          "Email was resend, please check your email to verify",
+          "Verification email has been resent. Please check your email to verify.",
           StatusCode.BAD_REQUEST
         );
       }
@@ -80,7 +80,7 @@ export class AuthServices {
       });
       // step 5
       const jwtToken = await generateSignature({
-        payload: newUser._id.toString(),
+        _id: newUser._id.toString(),
       });
       if (!jwtToken) {
         throw new ApiError("Unable to generate jwt token!");
@@ -190,7 +190,7 @@ export class AuthServices {
         throw new ApiError("Can't create new user in to user service!");
       }
       const jwtToken = await generateSignature({
-        payload: data._id.toString(),
+        _id: data._id.toString(),
       });
 
       await this.accountVerificationRepo.DeleteVerificationByToken({ token });
@@ -234,13 +234,13 @@ export class AuthServices {
           const requestUser = new RequestUserService();
           const { data } = await requestUser.CreateUser(userData);
           const { _id } = data;
-          const jwtToken = await generateSignature({ payload: _id.toString() });
+          const jwtToken = await generateSignature({ _id: _id.toString() });
           return { data, jwtToken };
         }
         const requestUser = new RequestUserService();
         const { data } = await requestUser.GetUser(user._id.toString());
         const { _id } = data;
-        const jwtToken = await generateSignature({ payload: _id.toString() });
+        const jwtToken = await generateSignature({ _id: _id.toString() });
         return { data, jwtToken };
       }
 
@@ -266,7 +266,7 @@ export class AuthServices {
       }
 
       const jwtToken = await generateSignature({
-        payload: data._id.toString(),
+        _id: data._id.toString(),
       });
       return { data, jwtToken };
     } catch (error) {
@@ -318,7 +318,7 @@ export class AuthServices {
       const { data } = await requestUser.GetUser(existingUser._id.toString());
 
       const jwtToken = await generateSignature({
-        payload: data._id.toString(),
+        _id: data._id.toString(),
       });
       return { data, jwtToken };
     } catch (error) {
@@ -354,7 +354,7 @@ export class AuthServices {
         const { data } = await requestUser.GetUser(existingUser._id.toString());
 
         const { _id } = data;
-        const jwtToken = await generateSignature({ payload: _id.toString() });
+        const jwtToken = await generateSignature({ _id: _id.toString() });
         return { data, jwtToken };
       }
       //step 4
@@ -382,7 +382,7 @@ export class AuthServices {
         throw new ApiError("Can't create new user in user service!");
       }
       const jwtToken = await generateSignature({
-        payload: user.data._id.toString(),
+        _id: user.data._id.toString(),
       });
       return { data: user.data, jwtToken };
     } catch (error) {

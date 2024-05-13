@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { ApiError, BaseCustomError } from "../utils/base-custom-error";
 import StatusCode from "../utils/http-status-code";
 import { Schema, ZodError } from "zod";
+import { BaseCustomError, ApiError } from "../error/base-custom-error";
 
-export const zodValidate = (schema: Schema) => {
+export const TeacherValidate = (schema: Schema) => {
   return async (req: Request, _res: Response, _next: NextFunction) => {
     try {
       schema.parse(req.body);

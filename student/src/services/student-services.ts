@@ -3,7 +3,6 @@ import { StudentRepository } from "../databases/repositories/student.repository"
 import { BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "../utils/http-status-code";
 import { getUserInfo } from "../utils/htttp-request";
-import { decodedToken } from "../utils/jwt";
 
 export class StudentServices {
   public StudentRepo: StudentRepository;
@@ -13,11 +12,10 @@ export class StudentServices {
 
   async Signup(
     { schoolName, education, grade, studentCard }: Student,
-    token: string
+    userId: string
   ) {
     try {
-      const authId = await decodedToken(token as string);
-      const { data } = await getUserInfo(authId);
+      const { data } = await getUserInfo(userId);
 
       const { _id, firstname, lastname, email } = data;
 

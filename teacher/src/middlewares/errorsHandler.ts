@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction} from 'express'
-import {  BaseCustomError } from '../utils/base-custom-error'
+import { BaseCustomError } from '../error/base-custom-error';
 
 
 export const errorHandler = async (error: Error, _req: Request, res: Response, _next: NextFunction) =>{

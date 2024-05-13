@@ -29,7 +29,7 @@ const teacherSchemas = new mongoose.Schema({
   university:{
     type: String,
     min: 50,
-    max: 70,
+    max: 120,
     require: true
   },
   year_experience: {
@@ -43,7 +43,7 @@ const teacherSchemas = new mongoose.Schema({
   bio: {
     type: String,
     min: 50,
-    max: 70,
+    max: 120,
     require: true
   },
   teacher_experience: {
@@ -53,6 +53,8 @@ const teacherSchemas = new mongoose.Schema({
   motivation: {
     require: true,
     type: String,
+    min: 25,
+    max: 100,
   },
   date_available: {
     require: true,

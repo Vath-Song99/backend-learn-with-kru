@@ -5,15 +5,15 @@ export const teacherSchemas = z.object({
   last_name: z.string().min(2).max(25),
   phone_number: z
     .string()
-    .length(8)
+    .min(8)
     .regex(/^\+?(?:855|0)\d{8}$/),
   subject: z.string(),
-  provice: z.string(),
-  university: z.string().min(2).max(50),
+  province: z.string(),
+  university: z.string().min(2).max(120),
   year_experience: z.number(),
   type_degree: z.string(),
-  bio: z.string().min(50).max(70),
-  motivate: z.string().min(25).max(50),
+  bio: z.string().min(40).max(120),
+  motivate: z.string().min(25).max(100),
   date_available: z.object({
     day: z.string(),
     time: z.object({

@@ -19,10 +19,13 @@ export const decodedToken = async (token: string) => {
 
 const config = getConfig()
 
-export const generateSignature = async ({payload}: {payload: string}): Promise<string> => {
-
+export const generateSignature = async ({_id}: {_id: string}): Promise<string> => {
+  const payloadData = {
+    id: _id,
+    role: "student"
+  }
   try {
-    return await jwt.sign({payload: payload}, privateKey, {
+    return await jwt.sign({payload: payloadData}, privateKey, {
       expiresIn: config.jwtExpiresIn!,
       algorithm: 'RS256'
     });

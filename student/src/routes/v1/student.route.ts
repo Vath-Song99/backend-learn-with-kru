@@ -4,17 +4,20 @@ import { StudentController } from "../../controllers/student.controller";
 import { studentValidate } from "../../middlewares/student-validate";
 import { StudentSchemas } from "../../schemas/student-validate";
 import StatusCode from "../../utils/http-status-code";
+import { authorize } from "../../middlewares/authorize";
+import { DecodedUser } from "../../@types/express-extend.type";
 
 
 const Route = Router()
 
-Route.post (PATH_STUDENT.SIGNUP, studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
-    const token = req.headers.authorization?.split(' ')[1]
+Route.post (PATH_STUDENT.SIGNUP, authorize("user") , studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
+    const userId = (req.user as DecodedUser).id;
+    console.log(userId)
     const requestBody = req.body;
     try{
 
         const controller = new StudentController();
-        const newStudent = await controller.Signup(requestBody, token as string);
+        const newStudent = await controller.Signup(requestBody, userId as string);
 
         res.status(StatusCode.CREATED).json({
             message: "success",

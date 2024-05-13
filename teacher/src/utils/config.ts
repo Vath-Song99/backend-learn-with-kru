@@ -1,6 +1,6 @@
 import path from 'path'
 import dotenv from 'dotenv'
-import { ApiError } from './base-custom-error';
+import { ApiError } from '../error/base-custom-error';
 function createConfig(configPath: string) {
   dotenv.config({ path: configPath });
 

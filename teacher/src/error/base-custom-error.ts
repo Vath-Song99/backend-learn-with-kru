@@ -1,4 +1,4 @@
-import StatusCode from "./http-status-code";
+import StatusCode from "../utils/http-status-code";
 
 export class BaseCustomError extends Error {
     statusCode: number;

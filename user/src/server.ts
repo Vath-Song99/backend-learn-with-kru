@@ -2,6 +2,8 @@ import path from "path";
 import app from "./app";
 import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";
+
+
 async function run() {
   try {
     const currentEnv = process.env.NODE_ENV || "development";

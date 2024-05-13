@@ -104,7 +104,7 @@ const proxyConfigs: ProxyConfig = {
         // Extract JWT token from session
         const token = expressReq.session!.jwt;
         proxyReq.setHeader('Authorization', `Bearer ${token}`)
-       
+        
       },
       proxyRes: (proxyRes, _req, res) => {
         let originalBody: Buffer[] = [];
@@ -113,7 +113,7 @@ const proxyConfigs: ProxyConfig = {
         })
         proxyRes.on('end', function () {
           const bodyString = Buffer.concat(originalBody).toString('utf8');
-          let responseBody: { message?: string; token?: string; teachers: Array<object>; errors?: Array<object> };
+          let responseBody: { message?: string; token?: string; data?: Array<object> , errors?: Array<object> };
           try {
             responseBody = JSON.parse(bodyString);
             // If Response Error, Not Modified Response
@@ -122,7 +122,7 @@ const proxyConfigs: ProxyConfig = {
             }
       
             // Modify response to send only the message to the client
-            res.json({ message: responseBody.message , teachers: responseBody.teachers });
+            res.json({ message: responseBody.message , data: responseBody.data });
           } catch (error) {
             return res.status(500).json({ message: "Error parsing response" });
           }

@@ -1,24 +1,27 @@
-import bcrypt from "bcrypt";
-import StatusCode from "./http-status-code";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { ApiError, BaseCustomError } from "../error/base-custom-error";
+import { logger } from "./logger";
 import getConfig from "./config";
+import StatusCode from "./http-status-code";
 import path from "path";
 import fs from "fs";
-
-const salt = 10;
+// Read the private key from the file
 
 const privateKeyPath = path.join(__dirname, "../../private_key.pem");
 // Read the private key from the file
 const privateKey = fs.readFileSync(privateKeyPath, "utf8");
 
-export const generatePassword = async (password: string) => {
+export const decodedToken = async (token: string) => {
   try {
-    return await bcrypt.hash(password, salt);
-  } catch (error) {
-    throw new ApiError("Unable to generate password");
+    const data = (await jwt.decode(token)) as JwtPayload;
+    return data.payload;
+  } catch (error: unknown) {
+    logger.error("Unable to decode in decodeToken() method !", error);
+    throw new ApiError("Can't Decode token!");
   }
 };
+
+const config = getConfig();
 
 export const generateSignature = async ({
   _id,
@@ -27,11 +30,11 @@ export const generateSignature = async ({
 }): Promise<string> => {
   const payloadData = {
     id: _id,
-    role: "user",
+    role: "teacher",
   };
   try {
     return await jwt.sign({ payload: payloadData }, privateKey, {
-      expiresIn: getConfig().jwtExpiresIn!,
+      expiresIn: config.jwtExpiresIn!,
       algorithm: "RS256",
     });
   } catch (error: unknown) {
@@ -39,23 +42,5 @@ export const generateSignature = async ({
       error instanceof Error ? error.message : "Unknown error occurred",
       StatusCode.NOT_ACCEPTABLE
     );
-  }
-};
-
-export const validatePassword = async ({
-  enteredPassword,
-  savedPassword,
-}: {
-  enteredPassword: string;
-  savedPassword: string;
-}) => {
-  try {
-    const isPasswordCorrect = await bcrypt.compare(
-      enteredPassword,
-      savedPassword
-    );
-    return isPasswordCorrect;
-  } catch (error) {
-    throw error;
   }
 };
