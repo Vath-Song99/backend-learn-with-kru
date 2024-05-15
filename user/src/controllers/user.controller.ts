@@ -20,15 +20,27 @@ export class UserController {
    }
 
    @SuccessResponse(StatusCode.OK, "OK")
-   @Get(PATH_USER.GETUSER)
-   async GetUser (authId: string){
+   @Get(PATH_USER.GET_USER_BY_AUTH_ID)
+   async GetUserByAuthId (authId: string){
     try{
         const service = new UserServices();
-        const user = await service.GetUser(authId);
+        const user = await service.GetUserByAuthId(authId);
 
         return user
     }catch(error: unknown){
         throw error
     }
+   };
+   @SuccessResponse(StatusCode.OK, "OK")
+   @Get(PATH_USER.GET_USER_BY_USER_ID)
+   async GetUserByUserId (userId: string): Promise<User> {
+        try{
+
+            const service = new UserServices();
+            const user = await service.GetUserByUserId(userId) as User
+            return user
+        }catch(error: unknown){
+            throw error
+        }
    }
 }

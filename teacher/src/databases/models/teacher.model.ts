@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import { Teacher } from "../../@types/teacher.type";
 
 const teacherSchemas = new mongoose.Schema({
+  userId: {
+    type: String
+  },
   first_name: {
     type: String,
     min: 2,

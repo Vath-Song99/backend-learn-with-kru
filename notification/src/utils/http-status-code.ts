@@ -68,7 +68,9 @@ enum StatusCode {
     INSUFFICIENT_STORAGE = 507,
     LOOP_DETECTED = 508,
     NOT_EXTENDED = 510,
-    NETWORK_AUTHENTICATION_REQUIRED = 511
+    NETWORK_AUTHENTICATION_REQUIRED = 511,
+    InternalServerError,
+    Conflict
 }
 
 export default StatusCode;

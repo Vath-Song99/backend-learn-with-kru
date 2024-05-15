@@ -11,9 +11,7 @@ export async function createQueueConnection(): Promise<Channel | undefined> {
     if (!rabbitMQUrl) {
       throw new Error("RabbitMQ URL is not defined in the configuration");
     }
-    console.log(rabbitMQUrl)
     const connection: Connection = await client.connect(rabbitMQUrl);
-    console.log("Heollo")
     const channel: Channel = await connection.createChannel();
     logger.info("Auth Server connected to queue successfully...");
     closeConnection(channel, connection)

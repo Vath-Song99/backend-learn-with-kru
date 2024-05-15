@@ -6,6 +6,7 @@ import { Paginate } from "../../@types/paginate.type";
 import { teacherSchemas } from "../../schemas/teacher-validate";
 import { TeacherValidate } from "../../middlewares/teacher-validate-input";
 import { authorize } from "../../middlewares/authorize";
+import { DecodedUser } from "../../@types/express-extend.type";
 
 const TeacherRoute = Router();
 
@@ -42,13 +43,15 @@ TeacherRoute.post(
   TeacherValidate(teacherSchemas),
   async (req: Request, res: Response, _next: NextFunction) => {
     const requestBody = req.body;
+    const user = (req.user as DecodedUser);
     try {
       const controller = new TeacherController();
-      const newTeacher = await controller.TeacherSingup(requestBody);
+      const newTeacher = await controller.TeacherSingup(requestBody , user.id);
 
       res.status(StatusCode.CREATED).json({
         message: 'success',
         data: newTeacher,
+        token: newTeacher.token
       });
     } catch (error: unknown) {
       _next(error);

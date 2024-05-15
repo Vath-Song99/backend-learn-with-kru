@@ -18,47 +18,13 @@ export class TeacherController {
     }
   }
 
-  public async TeacherSingup(requestBody: Teacher) {
-    const {
-      first_name,
-      last_name,
-      phone_number,
-      subject,
-      is_degree,
-      university,
-      year_experience,
-      type_degree,
-      specialization,
-      bio,
-      teacher_experience,
-      motivate,
-      date_available,
-      price,
-      certificate,
-      class_id,
-      video,
-    } = requestBody;
+  public async TeacherSingup(requestBody: Teacher, userId: string) {
     try {
+
+      const teacherInfo = {userId , ...requestBody}
+
       const service = new TeacherServices();
-      const newUser = await service.CreateTeacher({
-        first_name,
-        last_name,
-        phone_number,
-        subject,
-        is_degree,
-        university,
-        year_experience,
-        type_degree,
-        specialization,
-        bio,
-        teacher_experience,
-        motivate,
-        date_available,
-        price,
-        certificate,
-        class_id,
-        video,
-      });
+      const newUser = await service.CreateTeacher(teacherInfo);
 
       return newUser
     } catch (error: unknown) {

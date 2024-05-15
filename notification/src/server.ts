@@ -1,10 +1,9 @@
-import app from './app';
-import { startQueue } from './queue/connection.queue';
-import getConfig from './utils/config';
-import EmailSender from './utils/email-sender';
 import { logInit, logger } from './utils/logger';
-import NodemailerEmailApi from './utils/nodemailer-email-api';
-
+import app from './app';
+import { startQueue } from './queues/connection';
+import EmailSender from '@notifications/utils/email-sender';
+import NodemailerEmailApi from '@notifications/utils/nodemailer-email-api';
+import getConfig from '@notifications/utils/config';
 
 async function run() {
   try {

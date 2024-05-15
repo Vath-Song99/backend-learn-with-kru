@@ -1,6 +1,6 @@
 
 export interface User{
-   authId: string
+   authId?: string
    firstname: string;
    lastname: string;
    email?: string;

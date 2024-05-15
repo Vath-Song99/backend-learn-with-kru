@@ -5,10 +5,10 @@ import { StudentServices } from "../services/student-services";
 
 export class StudentController {
     async Signup (requestBody: Student , userId: string){
-        const {schoolName , education , grade , studentCard} = requestBody
+        const student = {userId , ...requestBody}
         try{
             const service = new StudentServices();
-            const newStudent = await service.Signup({schoolName , education , grade , studentCard}, userId);
+            const newStudent = await service.Signup(student);
             
             return newStudent
         }catch(error: unknown){

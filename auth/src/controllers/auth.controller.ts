@@ -21,12 +21,12 @@ export class AuthController {
   @Post(PATH_AUTH.signUp)
   @SuccessResponse(StatusCode.CREATED, "Created")
   @Middlewares(zodValidate(userValidateSchema))
-  public async Singup(@Body() requestBody: User): Promise<any> {
+  public async Singup(@Body() requestBody: User): Promise<void>{
     const {firstname , lastname , email , password } = requestBody;
     try {
       const authService = new AuthServices();
-      const users = await authService.Signup({firstname , lastname , email , password});
-      return users;
+      await authService.Signup({firstname , lastname , email , password});
+
     } catch (error) {
       throw error;
     }

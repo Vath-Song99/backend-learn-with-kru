@@ -1,18 +1,25 @@
-import axios from 'axios';
-import getConfig from './config';
-import { logger } from './logger';
+import axios, { AxiosInstance } from "axios";
+import { logger } from "./logger";
+import { User } from "../@types/user.type";
+import getConfig from "./config";
+import { PATH_USER } from "../routes/path-defs";
 
-const config = getConfig()
+export async function getUserInfo(
+  userId: string,
+  httpClient: AxiosInstance = axios
+): Promise<User> {
+  if (!userId) {
+    throw new Error("Invalid user ID");
+  }
 
-export async function getUserInfo(authId: string ) {
-   const url = config.authService
-    try {
-        const getUrl = `${url}/${authId}`
-        const response = await axios.get(getUrl);
+  const baseUrl = getConfig().userService;
+  const userUrl = `${baseUrl}/${PATH_USER.GET}${userId}`;
 
-        return response.data;
-    } catch (error) {
-        logger.error('Error fetching user info:', error);
-        throw error;
-    }
+  try {
+    const response = await httpClient.get<User>(userUrl);
+    return response.data;
+  } catch (error) {
+    logger.error(`Error fetching user info for user ID ${userId}:`, error);
+    throw new Error(`Failed to fetch user info for user ID ${userId}`);
+  }
 }

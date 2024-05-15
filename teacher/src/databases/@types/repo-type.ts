@@ -1,17 +1,13 @@
-import { User } from "../../@types/user.type";
-
-export interface AuthUserRepo extends User{
-   
-}
-export interface OauthUserRepo extends User{
-    googleId?: string;
-    facebookId?: string;
-    verified_email: boolean;
-    profile_picture?: string
-}
+import { ObjectId } from "mongodb";
+import { Teacher } from "../../@types/teacher.type";
 
 export interface PaginateRepo {
     pageSize: number;
     skip: number;
 }
-  
+
+export interface TeacherRepo extends Teacher{
+    _id?: ObjectId;
+    userId: string
+}
+

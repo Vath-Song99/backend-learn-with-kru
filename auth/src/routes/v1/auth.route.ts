@@ -13,18 +13,16 @@ AuthRoute.post(PATH_AUTH.signUp, zodValidate(userValidateSchema) , async (req: R
   const requestBody = req.body;
     try{
         const controller = new AuthController();
-        const respone = await controller.Singup(requestBody);
+         await controller.Singup(requestBody);
 
         res.status(StatusCode.OK).json({
             message: 'please verify your Email!',
-            token: respone.jwtToken
         })
     }catch(error: unknown){
     _next(error)
     }
     
 });
-
 
 AuthRoute.get(PATH_AUTH.login, zodValidate(authLoginSchema) , async(req: Request, res: Response , _next: NextFunction) =>{
   const requestBody = req.body

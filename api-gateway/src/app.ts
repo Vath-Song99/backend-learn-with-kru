@@ -46,6 +46,7 @@ app.use(hpp());
 app.use(helmet());
 
 // Only Allow Specific Origin to Access API Gateway (Frontend)
+console.log("Hello", getConfig().env)
 app.use(
   cors({
     origin:

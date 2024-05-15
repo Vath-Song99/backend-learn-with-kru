@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const studentSchemas = new mongoose.Schema({
-  authId: {
+  userId: {
     type: String
   },
   firstname:{

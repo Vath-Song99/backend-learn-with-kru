@@ -20,12 +20,12 @@ async function run() {
           : "../configs/.env.production"
     );
     const config = createConfig(configPath);
-
+    authChannel = (await createQueueConnection()) as Channel
 
     // Activate Database
     const mongodb = MongoDBConnector.getInstance();
-    await mongodb.connect({ url: config.mongoUrl as string });
-    authChannel = (await createQueueConnection()) as Channel
+    await mongodb.connect({ url: config.mongoUrl! });
+   
     // Start Server
     const server = app.listen(config.port, () => {
     });

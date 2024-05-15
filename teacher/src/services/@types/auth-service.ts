@@ -1,9 +1,10 @@
-import { User } from "../../@types/user.type";
+import { Teacher } from "../../@types/teacher.type";
 
-export interface AuthService extends User{
+
+export interface TeacherService extends Teacher {
+    userId: string
 }
-
-export interface GoogleOauth extends User{
-    googleId: string
-    verified_email: boolean
+export interface CreateTeacherRes {
+    TeacherRepo: TeacherService,
+    token: string
 }

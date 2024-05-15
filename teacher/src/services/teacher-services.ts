@@ -1,6 +1,9 @@
 import { Paginate } from "../@types/paginate.type";
-import { Teacher } from "../@types/teacher.type";
 import { TeacherRepository } from "../databases/repositories/teacher.repository";
+import { BaseCustomError } from "../error/base-custom-error";
+import StatusCode from "../utils/http-status-code";
+import { generateSignature } from "../utils/jwt";
+import {  TeacherService } from "./@types/auth-service";
 
 export class TeacherServices {
   private teacherRepo: TeacherRepository;
@@ -22,45 +25,23 @@ export class TeacherServices {
     }
   }
 
-  async CreateTeacher({
-    first_name,
-    last_name,
-    phone_number,
-    subject,
-    is_degree,
-    university,
-    year_experience,
-    type_degree,
-    specialization,
-    bio,
-    teacher_experience,
-    motivate,
-    date_available,
-    price,
-    certificate,
-    class_id,
-    video,
-  }: Teacher) {
+  async CreateTeacher(teacherData: TeacherService){
     try {
-      return await this.teacherRepo.CreateTeacher({
-        first_name,
-        last_name,
-        phone_number,
-        subject,
-        is_degree,
-        university,
-        year_experience,
-        type_degree,
-        specialization,
-        bio,
-        teacher_experience,
-        motivate,
-        date_available,
-        price,
-        certificate,
-        class_id,
-        video,
-      });
+      const { userId } = teacherData;
+      const existTeacher = await this.teacherRepo.FindTeacherByUserID(userId);
+
+      if (existTeacher) {
+        throw new BaseCustomError(
+          "you aready become a teacher !",
+          StatusCode.BAD_REQUEST
+        );
+      }
+
+      const newTeacher = await this.teacherRepo.CreateTeacher(teacherData);
+
+      const token = await generateSignature({_id: newTeacher._id!.toString()})
+
+      return {newTeacher, token};
     } catch (error: unknown) {
       throw error;
     }
@@ -68,9 +49,9 @@ export class TeacherServices {
 
   async FindOneTeacher({ _id }: { _id: string }) {
     try {
-      const teacher = await this.teacherRepo.FindOneTeacher({_id});
+      const teacher = await this.teacherRepo.FindTeacherById({ _id });
 
-      return teacher
+      return teacher;
     } catch (error: unknown) {
       throw error;
     }

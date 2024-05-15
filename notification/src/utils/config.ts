@@ -1,6 +1,6 @@
+import ApiError from '@notifications/errors/api-error';
 import dotenv from 'dotenv';
 import path from 'path';
-import { ApiError } from '../error/base-custom-error';
 
 function createConfig(configPath: string) {
   dotenv.config({ path: configPath });

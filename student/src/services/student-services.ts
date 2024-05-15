@@ -1,8 +1,9 @@
-import { Student } from "../@types/student.type";
 import { StudentRepository } from "../databases/repositories/student.repository";
 import { BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "../utils/http-status-code";
 import { getUserInfo } from "../utils/htttp-request";
+import { generateSignature } from "../utils/jwt";
+import { StudentService } from "./@types/student-service";
 
 export class StudentServices {
   public StudentRepo: StudentRepository;
@@ -10,31 +11,40 @@ export class StudentServices {
     this.StudentRepo = new StudentRepository();
   }
 
-  async Signup(
-    { schoolName, education, grade, studentCard }: Student,
-    userId: string
-  ) {
+  async Signup({
+    userId,
+    schoolName,
+    education,
+    grade,
+    studentCard,
+  }: StudentService) {
     try {
-      const { data } = await getUserInfo(userId);
+      const data = await getUserInfo(userId) ;
 
-      const { _id, firstname, lastname, email } = data;
+      const { firstname, lastname, email } = data;
+    
 
-      const existingStudent = await this.StudentRepo.FindOneStudent(_id);
+      const existingStudent = await this.StudentRepo.FindOneStudent(userId);
 
-      if(existingStudent.length > 0){
-        throw new BaseCustomError("Student is existing!", StatusCode.BAD_REQUEST)
+      if (existingStudent) {
+        throw new BaseCustomError(
+          "you're already be student",
+          StatusCode.BAD_REQUEST
+        );
       }
       const newStudent = await this.StudentRepo.CreateStudent({
-        authId: _id,
+        userId,
         firstname,
         lastname,
-        email: email,
+        email: email as string,
         schoolName,
         education,
         grade,
         studentCard,
       });
-      return  newStudent;
+
+      const token = await generateSignature({ _id: newStudent._id.toString() });
+      return { newStudent, token };
     } catch (error) {
       throw error;
     }

@@ -26,9 +26,11 @@ export class UserRepository {
   }
 
   //by User Id
-  async FindUser(authId: string){
+  async FindUser(userId: string){
     try{
-      const user = await UserModel.findOne({authId});
+      const user = await UserModel.findOne({
+        _id: userId
+      });
       return user
     }catch(error: unknown){
       throw error

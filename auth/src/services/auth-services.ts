@@ -18,6 +18,8 @@ import { ApiError, BaseCustomError } from "../error/base-custom-error";
 import { publishDirectMessage } from "../queue/auth.producer";
 import { authChannel } from "../server";
 import { RequestUserService } from "../utils/http-request";
+import { logger } from "../utils/logger";
+import getConfig from "../utils/config";
 
 export class AuthServices {
   private AuthRepo: AuthRepository;
@@ -28,7 +30,7 @@ export class AuthServices {
     this.accountVerificationRepo = new AccountVerificationRepository();
   }
 
-  async Signup(auth: AuthService) {
+  async Signup(auth: AuthService): Promise<void> {
     // TODO LIST
     //************************* */
     // 1. hast password
@@ -36,12 +38,10 @@ export class AuthServices {
     // 3. send verify email and handle for exist user
     // 4. create new user
     // 5. send verify email
-    // 6. generate jwt token
     try {
       const { firstname, lastname, email, password } = auth;
       // step 1
       const hashedPassword = await generatePassword(password as string);
-
       // step 2
       const existingUser = await this.AuthRepo.FindUserByEmail({
         email: email as string,
@@ -76,18 +76,15 @@ export class AuthServices {
       // step 4
       await this.SendVerifyEmailToken({
         authId: newUser._id,
-        email: newUser.email as string,
+        email: newUser!.email as string,
       });
-      // step 5
-      const jwtToken = await generateSignature({
-        _id: newUser._id.toString(),
-      });
-      if (!jwtToken) {
-        throw new ApiError("Unable to generate jwt token!");
-      }
-      return { newUser, jwtToken };
+
     } catch (error: unknown) {
-      throw error;
+      logger.error("The erorr accur in Singup() method! : ", error)
+      if(error instanceof BaseCustomError){
+        throw error
+      }
+      throw new ApiError("Songthing went wrong!")
     }
   }
 
@@ -115,7 +112,7 @@ export class AuthServices {
       // step 4
       const accountVerification = new AccountVerificationModel({
         authId: authId,
-        emailVerificationToken,
+        emailVerificationToken: emailVerificationToken,
         expired_at: inTenMinutes,
       });
       const newAccountVerification = await accountVerification.save();
@@ -123,20 +120,21 @@ export class AuthServices {
       // step 5
       const messageDetails = {
         receiverEmail: email,
-        verifyLink: `${newAccountVerification.emailVerificationToken}`,
+        verifyLink: `${getConfig().apiGateway}/v1/auth/verify/${newAccountVerification.emailVerificationToken}`,
         template: "verifyEmail",
       };
 
       // Publish To Notification Service
       await publishDirectMessage(
         authChannel,
-        "learnwithkru-verify-email-notification",
+        "learnwithkru-verify-email",
         "auth-email",
         JSON.stringify(messageDetails),
         "Verify email message has been sent to notification service"
       );
     } catch (error) {
-      throw error;
+      logger.error("Unexpected error accurs in SendVerifyEmailToken() method! :",error);
+      throw error
     }
   }
 
@@ -270,7 +268,11 @@ export class AuthServices {
       });
       return { data, jwtToken };
     } catch (error) {
-      throw error;
+      logger.error("The error of SigninwithGoogle() method! :", error)
+      if(error instanceof BaseCustomError){
+        throw error;
+      }
+      throw new ApiError("Somthing went wrong!")
     }
   }
 
@@ -317,12 +319,20 @@ export class AuthServices {
       const requestUser = new RequestUserService();
       const { data } = await requestUser.GetUser(existingUser._id.toString());
 
+      if(!data){
+        logger.error("No User found in Login() when request data from user db!")
+        throw new ApiError("User doesn't exist!",StatusCode.NOT_FOUND)
+      }
       const jwtToken = await generateSignature({
         _id: data._id.toString(),
       });
       return { data, jwtToken };
     } catch (error) {
-      throw error;
+        logger.error("Login () method error:", error)
+        if(error instanceof BaseCustomError){
+          throw error;
+        }
+        throw new ApiError("Somthing when wrong!")
     }
   }
 

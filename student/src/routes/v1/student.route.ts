@@ -10,9 +10,8 @@ import { DecodedUser } from "../../@types/express-extend.type";
 
 const Route = Router()
 
-Route.post (PATH_STUDENT.SIGNUP, authorize("user") , studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
+Route.post (PATH_STUDENT.SIGNUP, authorize("student") , studentValidate(StudentSchemas) , async (req: Request , res: Response, _next: NextFunction) =>{
     const userId = (req.user as DecodedUser).id;
-    console.log(userId)
     const requestBody = req.body;
     try{
 
@@ -20,8 +19,9 @@ Route.post (PATH_STUDENT.SIGNUP, authorize("user") , studentValidate(StudentSche
         const newStudent = await controller.Signup(requestBody, userId as string);
 
         res.status(StatusCode.CREATED).json({
-            message: "success",
-            student: newStudent
+            message: "Create success",
+            data: newStudent,
+            token: newStudent.token
         })
     }catch(error: unknown){
         _next(error)

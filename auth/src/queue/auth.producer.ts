@@ -13,7 +13,7 @@ export async function publishDirectMessage(
     if (!channel) {
       channel = (await createQueueConnection()) as Channel;
     }
-
+    
     await channel.assertExchange(exchangeName,'direct')
     channel.publish(exchangeName, routingKey, Buffer.from(message));
     logger.info(logMessage);

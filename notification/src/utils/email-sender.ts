@@ -1,5 +1,5 @@
-import { ApiError } from '../error/base-custom-error';
 import { EmailApi, IEmailLocals } from './@types/email-sender.type';
+import ApiError from '@notifications/errors/api-error';
 
 // ********************************
 // Singleton Pattern

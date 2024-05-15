@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   rabbitmq:
     container_name: rabbitmq_container
@@ -10,7 +12,7 @@ services:
       - "5672:5672"
       - "15672:15672"
   gateway:
-    container_name: gateway
+    container_name: gateway_container
     build:
       context: ../api-gateway
       dockerfile: Dockerfile.dev
@@ -23,8 +25,10 @@ services:
       TEACHER_SERVICE_URL: "http://teacher:3002"
       STUDENT_SERVICE_URL: "http://student:3003"
       USER_SERVICE_URL: "http://user:3004"
+    volumes:
+      - ../api-gateway/src:/app/src
   auth:
-    container_name: auth
+    container_name: auth_container
     build:
       context: ../auth
       dockerfile: Dockerfile.dev
@@ -34,9 +38,12 @@ services:
     env_file: ../auth/configs/.env
     environment:
       USER_SERVICE: "http://user:3004"
-
+    volumes:
+      - ../auth/src:/app/src
+    depends_on:
+      - rabbitmq
   user:
-    container_name: user
+    container_name: user_container
     build:
       context: ../user
       dockerfile: Dockerfile.dev
@@ -46,8 +53,11 @@ services:
     env_file: ../user/configs/.env
     environment:
       AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
+    volumes:
+      - ../user/src:/app/src
+
   notification:
-    container_name: notification
+    container_name: notification_container
     build:
       context: ../notification
       dockerfile: Dockerfile.dev
@@ -57,8 +67,9 @@ services:
     env_file: ../notification/configs/.env
     depends_on:
       - rabbitmq
+
   student:
-    container_name: student
+    container_name: student_container
     build:
       context: ../student
       dockerfile: Dockerfile.dev
@@ -67,9 +78,12 @@ services:
       - "3003:3003"
     env_file: ../student/configs/.env
     environment:
-      AUTH_SERVICE_GET: http://auth:3001/v1/auth/user   
+      AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
+    volumes:
+      - ../student/src:/app/src
+
   teacher:
-    container_name: teacher
+    container_name: teacher_container
     build:
       context: ../teacher
       dockerfile: Dockerfile.dev
@@ -77,4 +91,5 @@ services:
     ports:
       - "3002:3002"
     env_file: ../teacher/configs/.env
-        
+    volumes:
+      - ../teacher/src:/app/src

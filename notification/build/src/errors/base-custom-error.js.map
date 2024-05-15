@@ -1,0 +1,1 @@
+{"version":3,"file":"base-custom-error.js","sourceRoot":"","sources":["../../../src/errors/base-custom-error.ts"],"names":[],"mappings":";;AAEA,MAA8B,eAAgB,SAAQ,KAAK;IAGzD,YAAsB,OAAe,EAAE,UAAkB;QACvD,KAAK,CAAC,OAAO,CAAC,CAAC;QACf,IAAI,CAAC,UAAU,GAAG,UAAU,CAAC;QAE7B,sDAAsD;QACtD,MAAM,CAAC,cAAc,CAAC,IAAI,EAAE,eAAe,CAAC,SAAS,CAAC,CAAC;IACzD,CAAC;CAKF;AAdD,kCAcC"}

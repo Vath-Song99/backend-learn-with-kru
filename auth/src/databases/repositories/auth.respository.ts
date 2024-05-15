@@ -3,6 +3,7 @@ import { AuthUserRepo, OauthUserRepo, UserUpdates } from "../@types/repo-type";
 import { ApiError, BaseCustomError } from "../../error/base-custom-error";
 import StatusCode from "../../utils/http-status-code";
 import { ObjectId } from "mongodb";
+import { logger } from "../../utils/logger";
 export class AuthRepository {
   async CreateAuthUser({ firstname, lastname, email, password }: AuthUserRepo) {
     try {
@@ -66,10 +67,8 @@ export class AuthRepository {
       const existingUser = await authModel.findOne({ email: email });
       return existingUser;
     } catch (error) {
-      throw new BaseCustomError(
-        "Unable to Find User in Database",
-        StatusCode.FORBIDDEN
-      );
+      logger.error("Unexpected an accurs error: ", error);
+      throw new ApiError("Somthing went wrong!")
     }
   }
   async FindUserById({ id }: { id: string | ObjectId }) {
