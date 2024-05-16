@@ -124,6 +124,7 @@ export class AuthServices {
         template: "verifyEmail",
       };
 
+      // console.log(messageDetails)
       // Publish To Notification Service
       await publishDirectMessage(
         authChannel,

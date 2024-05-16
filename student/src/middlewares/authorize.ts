@@ -16,7 +16,7 @@ export const authorize = (requireRole: string) => {
       const decoded = await decodedToken(token);
 
       const { role } = decoded;
-      if (role !== requireRole) {
+      if (requireRole.includes(role)) {
         throw new BaseCustomError(
           "Forbidden - Insufficient permissions",
           StatusCode.FORBIDDEN

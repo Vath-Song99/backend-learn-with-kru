@@ -9,14 +9,14 @@ interface RequestWithUser extends Request {
   user: DecodedUser;
 }
 
-export const authorize = (requireRole: string) => {
+export const authorize = (requireRole: Array<string>) => {
   return async (req: Request, _res: Response, _next: NextFunction) => {
     try {
       const token = req.headers.authorization?.split(" ")[1] as string;
       const decoded = await decodedToken(token);
 
       const { role } = decoded;
-      if (role !== requireRole) {
+      if (requireRole.includes(role)) {
         throw new BaseCustomError(
           "Forbidden - Insufficient permissions",
           StatusCode.FORBIDDEN

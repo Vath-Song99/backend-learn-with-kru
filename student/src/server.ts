@@ -1,4 +1,4 @@
-import path from "path";
+import * as path from "path";
 import app from "./app";
 import createConfig from "./utils/config";
 import MongoDBConnector from "./databases";

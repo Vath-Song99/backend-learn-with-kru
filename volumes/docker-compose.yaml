@@ -33,17 +33,14 @@ services:
     restart: always
     ports:
       - "3001:3001"
+    volumes:
+      - ../auth/src:/app/src
     env_file: ../auth/configs/.env
     environment:
       USER_SERVICE: "http://user:3004"
-    volumes:
-      - ../auth/src:/app
-      - ../auth/src:/app/src
-      - ../auth/tsconfig.json:/app/tsconfig.json
-      - ../auth/package.json:/app/package.json
-      - ../auth/private_key.pem:/app/private_key.pem
     depends_on:
       - rabbitmq
+
   user:
     container_name: user_container
     build:
@@ -87,3 +84,6 @@ services:
     ports:
       - "3002:3002"
     env_file: ../teacher/configs/.env
+networks:
+  default:
+    driver: bridge
