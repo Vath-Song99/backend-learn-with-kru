@@ -19,6 +19,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - ../api-gateway/src:/app/src
     env_file: ../api-gateway/configs/.env
     environment:
       AUTH_SERVICE_URL: http://auth:3001
@@ -49,6 +51,8 @@ services:
     restart: always
     ports:
       - "3004:3004"
+    volumes:
+      - ../user/src:/app/src
     env_file: ../user/configs/.env
     environment:
       AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
@@ -60,6 +64,8 @@ services:
     restart: always
     ports:
       - "3005:3005"
+    volumes:
+      - ../notification/src:/app/src
     env_file: ../notification/configs/.env
     depends_on:
       - rabbitmq
@@ -72,6 +78,8 @@ services:
     restart: always
     ports:
       - "3003:3003"
+    volumes:
+      - ../student/src:/app/src
     env_file: ../student/configs/.env
     environment:
       AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
@@ -83,6 +91,8 @@ services:
     restart: always
     ports:
       - "3002:3002"
+    volumes:
+      - ../teacher/src:/app/src
     env_file: ../teacher/configs/.env
 networks:
   default:
