@@ -18,12 +18,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+
 
 
 
@@ -31,26 +26,10 @@
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="https://github.com/othneildrew/Best-README-Template/raw/master/images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://learnwithkru.com/_next/image?url=%2FLogos%2FKruLogo.png&w=640&q=75" alt="Logo" width="90" height="80">
   </a>
-
-  <h3 align="center">Best-README-Template</h3>
-
-  <p align="center">
-    An awesome README template to jumpstart your projects!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
-  </p>
+  <h1 align="center">Project Learnwithkru</h1>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -78,76 +57,85 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+In a digitally interconnected world, the demand for personalized education has never been higher. Students and learners of all ages are seeking tailored learning experiences that cater to their individual needs, preferences, and schedules. Meanwhile, educators are looking for flexible platforms that allow them to reach a broader audience and provide impactful, one-on-one instruction. Our project aims to bridge this gap by creating an innovative platform designed to connect students and teachers for personalized, one-on-one educational experiences, similar to the well-established Preply platform.
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+Our platform leverages cutting-edge technology to facilitate seamless interactions between students and educators. By providing a user-friendly interface, robust search functionalities, and secure communication tools, we empower learners to find the perfect teacher who can guide them through their educational journey. Teachers, in turn, gain access to a diverse pool of students, allowing them to expand their reach and impact.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+Whether it's mastering a new language, excelling in academic subjects, or acquiring new skills, our platform is dedicated to making personalized education accessible and effective. Join us in revolutionizing the way education is delivered and received, creating meaningful connections that foster growth, learning, and success.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+This section lists major frameworks and libraries used in the Learnwithkru project:
 
-* ![Nodejs][Node.js]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
+* ![Node.js][Node.js]
+* [![TypeScript][TypeScript]][TypeScript-url]
+* [![Express][Express.js]][Express-url]
 * [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![MongoDB][MongoDB]][MongoDB-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- LINKS -->
+[Node.js-url]: https://nodejs.org/
+[TypeScript-url]: https://www.typescriptlang.org/
+[Express-url]: https://expressjs.com/
+[Angular-url]: https://angular.io/
+[MongoDB-url]: https://www.mongodb.com/
 
-
-<!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+### With Docker
 
-### Prerequisites
+Follow these steps to set up this project locally using Docker.
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+#### Prerequisites
 
-### Installation
+Ensure you have the following software installed before proceeding:
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+#### Setup Steps
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+1. Navigate to the `volumes` folder:
+
+    ```sh
+    cd volumes
+    ```
+
+2. Build and run the Docker containers:
+
+    ```sh
+    docker-compose up --build
+    ```
+
+After completing these steps, your project will be successfully set up locally!
+
+### Without Docker
+
+If you prefer to set up the project without Docker, follow these commands:
+
+1. Navigate to the specific service directory:
+
+    ```sh
+    cd service_name
+    ```
+
+2. Install the necessary Node.js modules:
+
+    ```sh
+    npm install
+    ```
+
+3. Start the development server:
+
+    ```sh
+    npm run start:dev
+    ```
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -156,53 +144,36 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Our platform supports three types of users, each with distinct features and functionalities:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### 1. Normal User
+- **Explore**: Browse through the platform to understand the features and services offered.
+- **Search**: Use the search functionality to find courses, tutors, and resources without registering.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### 2. Student
+- **Join Classes**: 
+  - **Search for Tutors**: Use the search feature to find tutors based on your specific needs and preferences, such as subject, availability, and ratings.
+  - **View Tutor Profiles**: Check detailed profiles of tutors, including their qualifications, teaching style, and reviews from other students.
+  - **Book a Lesson**: Schedule and book lessons at times that suit you through a seamless booking process.
+- **Attend Lessons**:
+  - **Join Lessons**: Participate in scheduled lessons via our secure video platform, enabling real-time interaction with your tutor.
+  - **Access Learning Materials**: Receive customized learning materials from your tutor to aid your learning journey.
+- **Track Progress**: Monitor your learning progress and review past lessons to ensure continuous improvement.
+- **Communicate**: Use our secure messaging system to stay in touch with tutors for any additional support or questions.
 
+### 3. Teacher
+- **Create Profile**: 
+  - **Post Profile**: List your qualifications, teaching experience, and the subjects you teach to attract students.
+  - **Upload Media**: Add introductory videos and other media to give potential students a better understanding of your teaching style.
+- **Manage Classes**:
+  - **List Available Times**: Specify your availability so students can book lessons at convenient times.
+  - **Conduct Lessons**: Use our secure video platform to conduct one-on-one or group lessons.
+- **Interact with Students**:
+  - **Provide Learning Materials**: Share customized materials to support your students' learning.
+  - **Receive Reviews**: Collect feedback from students to improve your profile and attract more learners.
+- **Track Earnings**: Monitor your earnings and manage payments through our integrated system.
 
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+_For more examples and detailed instructions, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -211,29 +182,12 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Smoeury Songvat - (https://www.facebook.com/vath.goodboi) - learnwithkru287@gmail.com
 
 Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
