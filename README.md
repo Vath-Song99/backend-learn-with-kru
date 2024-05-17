@@ -79,7 +79,7 @@ This section lists major frameworks and libraries used in the Learnwithkru proje
 [Node.js-url]: https://nodejs.org/
 [TypeScript-url]: https://www.typescriptlang.org/
 [Express-url]: https://expressjs.com/
-[Angular-url]: https://angular.io/
+
 [MongoDB-url]: https://www.mongodb.com/
 
 ## Getting Started
