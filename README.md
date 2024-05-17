@@ -71,7 +71,6 @@ This section lists major frameworks and libraries used in the Learnwithkru proje
 * ![Node.js][Node.js]
 * [![TypeScript][TypeScript]][TypeScript-url]
 * [![Express][Express.js]][Express-url]
-* [![Angular][Angular.io]][Angular-url]
 * [![MongoDB][MongoDB]][MongoDB-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
