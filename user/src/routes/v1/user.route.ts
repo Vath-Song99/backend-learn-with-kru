@@ -45,6 +45,7 @@ Route.get(
   PATH_USER.GET_USER_BY_USER_ID,
   async (req: Request, res: Response, _next: NextFunction) => {
     const { userId } = req.params;
+    console.log("UserId:", userId)
     try {
       const controller = new UserController();
       const user = await controller.GetUserByUserId(userId);

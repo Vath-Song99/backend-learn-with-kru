@@ -31,6 +31,7 @@ export class UserRepository {
       const user = await UserModel.findOne({
         _id: userId
       });
+      console.log("Repo:", user)
       return user
     }catch(error: unknown){
       throw error

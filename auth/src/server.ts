@@ -5,64 +5,77 @@ import MongoDBConnector from "./databases";
 import { Channel } from "amqplib";
 import { createQueueConnection } from "./queue/connection.queue";
 
-export let authChannel: Channel
+export let authChannel: Channel;
+
+async function initializeConfig() {
+  const currentEnv = process.env.NODE_ENV || "development";
+  const configPath = path.join(
+    __dirname,
+    currentEnv === "development"
+      ? "../configs/.env"
+      : currentEnv === "staging"
+      ? "../configs/.env.staging"
+      : "../configs/.env.production"
+  );
+  return createConfig(configPath);
+}
+
+async function initializeQueueConnection() {
+  return (await createQueueConnection()) as Channel;
+}
+
+async function initializeDatabase(mongoUrl: string) {
+  const mongodb = MongoDBConnector.getInstance();
+  await mongodb.connect({ url: mongoUrl });
+  return mongodb;
+}
+
+async function startServer(port: number) {
+  return app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
 async function run() {
+  let server: ReturnType<typeof app.listen> | null = null;
+  let mongodb: MongoDBConnector | null = null;
+
   try {
-    const currentEnv = process.env.NODE_ENV || "development";
+    const config = await initializeConfig();
+    authChannel = await initializeQueueConnection();
+    mongodb = await initializeDatabase(config.mongoUrl!);
+    server = await startServer(parseInt(config.port!));
 
-    const configPath = path.join(
-      __dirname,
-      currentEnv === "development"
-        ? "../configs/.env"
-        : currentEnv === "staging"
-          ? "../configs/.env.staging"
-          : "../configs/.env.production"
-    );
-    const config = createConfig(configPath);
-    authChannel = (await createQueueConnection()) as Channel
-
-    // Activate Database
-    const mongodb = MongoDBConnector.getInstance();
-    await mongodb.connect({ url: config.mongoUrl! });
-   
-    // Start Server
-    const server = app.listen(config.port, () => {
-    });
     const exitHandler = async () => {
       if (server) {
         server.close(async () => {
-          console.log("server closed!");
-          await mongodb.disconnect();
-          console.log("mongodb disconnected!");
-
-          // Gracefully Terminate 
+          console.log("Server closed.");
+          if (mongodb) await mongodb.disconnect();
+          console.log("MongoDB disconnected.");
           process.exit(1); // terminate the process due to error
         });
       } else {
-        await mongodb.disconnect(); // In case the server isn't running but DB needs to be disconnected
+        if (mongodb) await mongodb.disconnect();
         console.log("MongoDB disconnected.");
         process.exit(1);
       }
     };
+
     const unexpectedErrorHandler = (error: unknown) => {
-      console.log("unhandled error", { error });
+      console.error("Unhandled error:", error);
       exitHandler();
     };
-    // Error that might occur duing execution that not caught by any try/catch blocks
-    process.on("uncaughtException", unexpectedErrorHandler); // Syncronous
-    process.on("unhandledRejection", unexpectedErrorHandler); // Asyncronous
 
-    // A termination signal typically sent from OS or other software (DOCKER, KUBERNETES)
+    process.on("uncaughtException", unexpectedErrorHandler);
+    process.on("unhandledRejection", unexpectedErrorHandler);
     process.on("SIGTERM", () => {
       console.log("SIGTERM received");
-      if (server) {
-        // Stop the server from accepting new request but keeps existing connection open until all ongoin request are done
-        server.close();
-      }
+      if (server) server.close();
     });
   } catch (error) {
-    console.log(error);
+    console.error("Initialization error:", error);
+    if (mongodb) await mongodb.disconnect();
+    process.exit(1);
   }
 }
 

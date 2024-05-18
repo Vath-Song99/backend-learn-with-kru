@@ -8,7 +8,7 @@ const config = getConfig()
 export async function getUserInfo(authId: string ) {
    const url = config.authService
     try {
-        const getUrl = `${url}/${authId}`
+        const getUrl = `${url}/v1/auth/users/${authId}`
         const response = await axios.get(getUrl);
 
         return response.data;

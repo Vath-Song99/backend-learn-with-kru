@@ -1,25 +1,32 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { logger } from "./logger";
-import { User } from "../@types/user.type";
 import getConfig from "./config";
 import { PATH_USER } from "../routes/path-defs";
+import { ApiError } from "../error/base-custom-error";
 
-export async function getUserInfo(
-  userId: string,
-  httpClient: AxiosInstance = axios
-): Promise<User> {
-  if (!userId) {
-    throw new Error("Invalid user ID");
-  }
-
-  const baseUrl = getConfig().userService;
-  const userUrl = `${baseUrl}/${PATH_USER.GET}${userId}`;
-
+export const  getUserById = async(userId: string) => {
+  const url = `${getConfig().userService}${PATH_USER.GET}/${userId}`;
+  console.log(url)
   try {
-    const response = await httpClient.get<User>(userUrl);
+    const response = await axios.get(url);
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to fetch data from user service: ${response.statusText}`
+      );
+    }
     return response.data;
-  } catch (error) {
-    logger.error(`Error fetching user info for user ID ${userId}:`, error);
-    throw new Error(`Failed to fetch user info for user ID ${userId}`);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      logger.error("Axios Error in createUser() method:", error.message); 
+      if (error.response) {
+        logger.error("Response data:", error.response.data); 
+        logger.error("Response status:", error.response.status); 
+        logger.error("Response headers:", error.response.headers);
+      }
+      throw new ApiError("Error communicating with user service.");
+    } else {
+      logger.error("Unknown Error in createUser() method:", error);
+      throw error;
+    }
   }
 }

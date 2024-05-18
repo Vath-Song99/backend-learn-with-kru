@@ -27,6 +27,22 @@ services:
       TEACHER_SERVICE_URL: "http://teacher:3002"
       STUDENT_SERVICE_URL: "http://student:3003"
       USER_SERVICE_URL: "http://user:3004"
+      CLIENT_URL: http://localhost:8000
+  notification:
+    container_name: notification_container
+    build:
+      context: ../notification
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "3005:3005"
+    volumes:
+      - ../notification/src:/app/src
+    env_file: ../notification/configs/.env
+    environment:
+      RABBITMQ_ENDPOINT: amqp://myuser:mypassword@rabbitmq_container:5672
+    depends_on:
+      - rabbitmq
   auth:
     container_name: auth_container
     build:
@@ -39,7 +55,8 @@ services:
       - ../auth/src:/app/src
     env_file: ../auth/configs/.env
     environment:
-      USER_SERVICE: "http://user:3004"
+      USER_SERVICE: http://user:3004
+      RABBITMQ_ENDPOINT: amqp://myuser:mypassword@rabbitmq_container:5672
     depends_on:
       - rabbitmq
 
@@ -55,20 +72,7 @@ services:
       - ../user/src:/app/src
     env_file: ../user/configs/.env
     environment:
-      AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
-  notification:
-    container_name: notification_container
-    build:
-      context: ../notification
-      dockerfile: Dockerfile.dev
-    restart: always
-    ports:
-      - "3005:3005"
-    volumes:
-      - ../notification/src:/app/src
-    env_file: ../notification/configs/.env
-    depends_on:
-      - rabbitmq
+      AUTH_SERVICE_GET: http://auth:3001
 
   student:
     container_name: student_container
@@ -82,7 +86,7 @@ services:
       - ../student/src:/app/src
     env_file: ../student/configs/.env
     environment:
-      AUTH_SERVICE_GET: http://auth:3001/v1/auth/user
+      USER_SERVICE: http://user:3004
   teacher:
     container_name: teacher_container
     build:

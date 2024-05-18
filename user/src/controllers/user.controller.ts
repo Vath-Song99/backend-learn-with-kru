@@ -23,8 +23,10 @@ export class UserController {
    @Get(PATH_USER.GET_USER_BY_AUTH_ID)
    async GetUserByAuthId (authId: string){
     try{
+
+        console.log(authId)
         const service = new UserServices();
-        const user = await service.GetUserByAuthId(authId);
+        const user = await service.GetUserByAuthId(authId)
 
         return user
     }catch(error: unknown){

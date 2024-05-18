@@ -29,13 +29,13 @@ export async function consumeAuthEmailMessages(
       durable: true,
       autoDelete: false,
     });
+
     await channel.bindQueue(queue.queue, exchangeName, routingKey);
 
     channel.consume(queue.queue, async (msg: ConsumeMessage | null) => {
       const { receiverEmail, username, verifyLink, resetLink, template } =
         JSON.parse(msg!.content.toString());
 
-      console.log("hello email consumer: ", receiverEmail)
       const locals: IEmailLocals = {
         appLink: `${getConfig().clientUrl}`,
         appIcon: ``,
@@ -44,7 +44,6 @@ export async function consumeAuthEmailMessages(
         resetLink,
       };
 
-      console.log("Hello world")
       const emailUserSender = EmailSender.getInstance();
       await emailUserSender.sendEmail(template, receiverEmail, locals);
 

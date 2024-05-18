@@ -9,7 +9,7 @@ interface RequestWithUser extends Request {
   user: DecodedUser;
 }
 
-export const authorize = (requireRole: Array<string>) => {
+export const authorize = (requireRole: string[]) => {
   return async (req: Request, _res: Response, _next: NextFunction) => {
     try {
       const token = req.headers.authorization?.split(" ")[1] as string;

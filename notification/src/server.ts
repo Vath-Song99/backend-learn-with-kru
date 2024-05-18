@@ -9,32 +9,30 @@ async function run() {
   try {
     const config = getConfig();
 
-    // Activate Logger
+    // Initialize Logger
     logInit({ env: process.env.NODE_ENV, logLevel: config.logLevel });
 
-    // Activate Email Sender with EmailAPI [NodeMailer]
+    // Activate Email Sender with Nodemailer API
     const emailSender = EmailSender.getInstance();
     emailSender.activate();
     emailSender.setEmailApi(new NodemailerEmailApi());
 
-    // Activate RabbitMQ
+    // Start the Queue System (RabbitMQ)
     await startQueue();
+    logger.info('RabbitMQ queue system started successfully.');
 
-    logger.info(
-      `Worker with process id of ${process.pid} on notification server has started.`
-    );
-    // Start Server
+    logger.info(`Worker with process ID ${process.pid} on notification server has started.`);
+
+    // Start the Notification Server
     const server = app.listen(config.port, () => {
       logger.info(`Notification Server is listening on port: ${config.port}`);
     });
 
     const exitHandler = async () => {
       if (server) {
-        server.close(async () => {
-          logger.info('server closed!');
-
-          // Gracefully Terminate
-          process.exit(1); // terminate the process due to error
+        server.close(() => {
+          logger.info('Server closed!');
+          process.exit(1); // Exit process due to error
         });
       } else {
         process.exit(1);
@@ -42,29 +40,30 @@ async function run() {
     };
 
     const unexpectedErrorHandler = (error: unknown) => {
-      logger.error(`unhandled error, ${error}`);
+      logger.error(`Unhandled error: ${error}`);
       exitHandler();
     };
 
-    // Error that might occur duing execution that not caught by any try/catch blocks
-    process.on('uncaughtException', unexpectedErrorHandler); // Syncronous
-    process.on('unhandledRejection', unexpectedErrorHandler); // Asyncronous
+    // Handle uncaught exceptions and unhandled promise rejections
+    process.on('uncaughtException', unexpectedErrorHandler); // Synchronous errors
+    process.on('unhandledRejection', unexpectedErrorHandler); // Asynchronous errors
 
-    // A termination signal typically sent from OS or other software (DOCKER, KUBERNETES)
+    // Handle termination signals (e.g., from Docker or Kubernetes)
     process.on('SIGTERM', () => {
       logger.info('SIGTERM received');
       if (server) {
-        // Stop the server from accepting new request but keeps existing connection open until all ongoin request are done
-        server.close();
+        server.close(() => {
+          logger.info('Stopped accepting new requests');
+        });
       }
     });
   } catch (error) {
-    console.log(error);
-    logger.error(`Failed to initialize application ${error}`);
+    logger.error(`Failed to initialize application: ${error}`);
     process.exit(1);
   }
 }
 
+// Only run if not in a testing environment
 if (process.env.NODE_ENV !== 'testing') {
   run();
 }

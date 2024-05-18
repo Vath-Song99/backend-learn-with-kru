@@ -1,7 +1,7 @@
 import { StudentRepository } from "../databases/repositories/student.repository";
 import { BaseCustomError } from "../error/base-custom-error";
 import StatusCode from "../utils/http-status-code";
-import { getUserInfo } from "../utils/htttp-request";
+import { getUserById } from "../utils/htttp-request";
 import { generateSignature } from "../utils/jwt";
 import { StudentService } from "./@types/student-service";
 
@@ -19,7 +19,7 @@ export class StudentServices {
     studentCard,
   }: StudentService) {
     try {
-      const data = await getUserInfo(userId) ;
+      const data = await getUserById(userId) ;
 
       const { firstname, lastname, email } = data;
     

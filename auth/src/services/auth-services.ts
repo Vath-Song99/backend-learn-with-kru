@@ -120,7 +120,7 @@ export class AuthServices {
       // step 5
       const messageDetails = {
         receiverEmail: email,
-        verifyLink: `${getConfig().apiGateway}/v1/auth/verify/${newAccountVerification.emailVerificationToken}`,
+        verifyLink: `${getConfig().apiGateway}/v1/auth/verify?token=${newAccountVerification.emailVerificationToken}`,
         template: "verifyEmail",
       };
 
@@ -138,7 +138,7 @@ export class AuthServices {
       throw error
     }
   }
-
+ 
   async VerifyEmailToken(token: string) {
     try {
       const isTokenExist =
